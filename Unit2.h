@@ -1,28 +1,36 @@
 //---------------------------------------------------------------------------
 
-#ifndef uLogH
-#define uLogH
+#ifndef Unit2H
+#define Unit2H
 //---------------------------------------------------------------------------
 #include <System.Classes.hpp>
 #include <Vcl.Controls.hpp>
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
-#include <Vcl.Menus.hpp>
 //---------------------------------------------------------------------------
-class TLog : public TForm
+class TForm2 : public TForm
 {
 __published:	// IDE-managed Components
 	TRichEdit *LogWnd;
 	void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
-	void Add(UnicodeString ToLog);
-	UnicodeString& RemoveLowChar(UnicodeString& Source);
-	__fastcall TLog(TComponent* Owner);
-	String Header;
+	__fastcall TForm2(TComponent* Owner);
 };
 //---------------------------------------------------------------------------
-extern PACKAGE TLog *Log;
+class TLog
+{
+public:
+UnicodeString* Header;
+UnicodeString* Body;
+TRichEdit* Output;
+TLog(TRichEdit*);
+void Add(UnicodeString ToLog);
+UnicodeString& RemoveLowChar(UnicodeString&);
+~TLog();
+};
+extern PACKAGE TForm2 *Form2;
+extern TLog* Log;
 //---------------------------------------------------------------------------
 #endif

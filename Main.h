@@ -11,21 +11,15 @@
 #include "OverbyteIcsWSocket.hpp"
 #include "OverbyteIcsWSocketS.hpp"
 #include <Vcl.ComCtrls.hpp>
-#include "uLog.h"
+//#include "uLog.h"
+//#include "Unit2.h"
 //---------------------------------------------------------------------------
 class TClient: public TWSocketClient
 {
 public:
 String Rcvd;
 TWSocket* RemoteSocket;
-inline __fastcall ~TClient(void)
-{
-if (!Application->Terminated) {
-	Log->Header = "Connection Closed";
-	Log->Add("");
-	}
-this->RemoteSocket->Free();
-}
+inline __fastcall ~TClient(void);
 };
 //---------------------------------------------------------------------------
 class TForm1 : public TForm

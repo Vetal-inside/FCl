@@ -4,6 +4,7 @@
 #pragma hdrstop
 
 #include "Main.h"
+#include "Unit2.cpp"
 
 //---------------------------------------------------------------------------
 
@@ -13,8 +14,18 @@
 #pragma resource "*.dfm"
 
 TForm1 *Form1;
+TForm2 *Form2;
+TLog* Log;
 //---------------------------------------------------------------------------
-
+inline __fastcall TClient::~TClient(void)
+{
+if (!Application->Terminated) {
+	Log->Header->operator =("Connection Closed");
+	Log->Add("");
+	}
+this->RemoteSocket->Free();
+}
+//---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
@@ -48,7 +59,6 @@ if (ListenBtn->Tag == 0) {
 
 void __fastcall TForm1::WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error)
 {
-const TColor aColor[11]  = {clBlack, clMaroon, clGreen, clOlive, clNavy, clPurple, clRed, clLime, clYellow, clBlue, clFuchsia};
 ((TClient*)Client)->Rcvd = "";
 Client->OnDataAvailable = ClientDataAvailable;
 Client->OnBgException = BgException;
@@ -66,31 +76,23 @@ Client->LineEnd = "\r\n";
 ((TClient*)Client)->RemoteSocket->Connect();
 Form1->StatusBar->Panels->operator [](1)->Text = IntToStr(WSocketServer->ClientCount);
 Form1->StatusBar->Panels->operator [](3)->Text = Client->GetPeerAddr();
-if (WSocketServer->ClientCount <=11) {
-	Log->Color = aColor[WSocketServer->ClientCount];
-	} else {
-		Color = clBlack;
-		};
 }
 
 void __fastcall TForm1::RemoteSessionConnected(TObject *Sender, WORD Error)
 {
 if (Error != 0) {exit(Error);};
-UnicodeString abc = Sender->ClassName();
-abc = ((TWSocket*)Sender)->Owner->ClassName();
-abc = ((TWSocket*)Sender)->ClassName();
 if (Form1->CheckBox1->Checked) {
-	Log->Header = "Connection Opened";
+	Log->Header->operator =("Connection Opened");
 	Log->Add("");
 	}
 if (((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd != "") {
 	if (Form1->CheckBox1->Checked) {
-		Log->Header = "Open From Local 1";
+		Log->Header->operator =("Open From Local 1");
 		Log->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd = ExchangeString(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 	if (Form1->CheckBox1->Checked) {
-		Log->Header = "Open From Local 2";
+		Log->Header->operator =("Open From Local 2");
 		Log->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->RemoteSocket->SendStr(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
@@ -105,14 +107,14 @@ if (Error != 0) {exit(Error);};
 FromRemote = ((TClient*)(((TWSocket*)Sender)))->ReceiveStr();
 if (FromRemote != "") {
 	if (Form1->CheckBox1->Checked) {
-		Log->Header = "From Remote";
+		Log->Header->operator =("From Remote");
 		Log->Add(FromRemote);
 		}
 	if (((TClient*)(((TWSocket*)Sender)->Owner))->State == wsConnected) {
 		((TClient*)(((TWSocket*)Sender)->Owner))->SendStr(FromRemote);
 		} else {
 			if (Form1->CheckBox1->Checked) {
-				Log->Header = "Error: Local has closed";
+				Log->Header->operator =("Error: Local has closed");
 				Log->Add("");
 				}
 			((TClient*)(((TWSocket*)Sender)->Owner))->CloseDelayed();
@@ -145,12 +147,12 @@ if (Error != 0) {exit(Error);};
 ((TClient*)Sender)->Rcvd = ((TClient*)Sender)->Rcvd + ((TClient*)Sender)->ReceiveStr();
 if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sender)->Rcvd != "")) {
 	if (Form1->CheckBox1->Checked) {
-		Log->Header = "From Local 1";
+		Log->Header->operator =("From Local 1");
 		Log->Add(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->Rcvd = ExchangeString(((TClient*)Sender)->Rcvd);
 	if (Form1->CheckBox1->Checked) {
-		Log->Header = "From Local 2";
+		Log->Header->operator =("From Local 2");
 		Log->Add(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->RemoteSocket->SendStr(((TClient*)Sender)->Rcvd);

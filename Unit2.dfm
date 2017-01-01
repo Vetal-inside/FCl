@@ -1,9 +1,9 @@
-object Log: TLog
+object Form2: TForm2
   Left = 0
   Top = 0
   Caption = 'Log'
-  ClientHeight = 537
-  ClientWidth = 1111
+  ClientHeight = 218
+  ClientWidth = 1034
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
