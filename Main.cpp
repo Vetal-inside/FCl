@@ -52,11 +52,11 @@ const TColor aColor[11]  = {clBlack, clMaroon, clGreen, clOlive, clNavy, clPurpl
 ((TClient*)Client)->Rcvd = "";
 Client->OnDataAvailable = ClientDataAvailable;
 Client->OnBgException = BgException;
-Client->LineMode = Log->LineMode1->Checked;
+Client->LineMode = false;
 Client->LineEnd = "\r\n";
 ((TClient*)Client)->RemoteSocket = new TWSocket(((TClient*)Client));
 ((TClient*)Client)->RemoteSocket->Port = Form1->RemotePort->Text;
-((TClient*)Client)->RemoteSocket->LineMode = Log->LineMode1->Checked;
+((TClient*)Client)->RemoteSocket->LineMode = false;
 ((TClient*)Client)->RemoteSocket->LineEnd = "\r\n";
 ((TClient*)Client)->RemoteSocket->OnSessionConnected = RemoteSessionConnected;
 ((TClient*)Client)->RemoteSocket->OnDataAvailable = RemoteDataAvailable;
@@ -80,13 +80,11 @@ UnicodeString abc = Sender->ClassName();
 abc = ((TWSocket*)Sender)->Owner->ClassName();
 abc = ((TWSocket*)Sender)->ClassName();
 if (Form1->CheckBox1->Checked) {
-	Log->TextColor = ((TClient*)(((TWSocket*)Sender)->Owner))->Color;
 	Log->Header = "Connection Opened";
 	Log->Add("");
 	}
 if (((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd != "") {
 	if (Form1->CheckBox1->Checked) {
-		Log->TextColor = ((TClient*)(((TWSocket*)Sender)->Owner))->Color;
 		Log->Header = "Open From Local 1";
 		Log->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
@@ -107,7 +105,6 @@ if (Error != 0) {exit(Error);};
 FromRemote = ((TClient*)(((TWSocket*)Sender)))->ReceiveStr();
 if (FromRemote != "") {
 	if (Form1->CheckBox1->Checked) {
-		Log->TextColor = ((TClient*)(((TWSocket*)Sender)->Owner))->Color;
 		Log->Header = "From Remote";
 		Log->Add(FromRemote);
 		}
@@ -148,7 +145,6 @@ if (Error != 0) {exit(Error);};
 ((TClient*)Sender)->Rcvd = ((TClient*)Sender)->Rcvd + ((TClient*)Sender)->ReceiveStr();
 if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sender)->Rcvd != "")) {
 	if (Form1->CheckBox1->Checked) {
-		Log->TextColor = ((TClient*)Sender)->Color;
 		Log->Header = "From Local 1";
 		Log->Add(((TClient*)Sender)->Rcvd);
 		}

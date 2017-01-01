@@ -28,33 +28,9 @@ object Log: TLog
     Lines.Strings = (
       'LogWnd')
     ParentFont = False
-    PopupMenu = PopupMenu
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0
     WordWrap = False
-  end
-  object PopupMenu: TPopupMenu
-    Left = 56
-    Top = 128
-    object Copy1: TMenuItem
-      Caption = '&Copy'
-    end
-    object Clear1: TMenuItem
-      Caption = '&Clear'
-    end
-    object Refresh1: TMenuItem
-      Caption = '&Refresh'
-      Checked = True
-    end
-    object LineMode1: TMenuItem
-      Caption = '&LineMode'
-    end
-    object Debugstring1: TMenuItem
-      Caption = '&Debugstring'
-    end
-    object Wordwrap1: TMenuItem
-      Caption = '&Word wrap'
-    end
   end
 end

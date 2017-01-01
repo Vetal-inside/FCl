@@ -24,18 +24,11 @@ OrgPos = this->LogWnd->SelStart;
 this->LogWnd->Lines->BeginUpdate();
 try {
 	this->LogWnd->SelStart = this->LogWnd->GetTextLen();
-	this->LogWnd->SelAttributes->Color = this->TextColor;
 	if ((this->LogWnd->Lines->Count > 0)&&(this->LogWnd->Lines->operator [](this->LogWnd->Lines->Count - 1) != "")) {
 		this->LogWnd->Lines->Add("");
 		}
 	this->LogWnd->Lines->Add(DateTimeToStr(Now())+" "+this->Header);
-	if (!Debugstring1->Checked) {
-		this->LogWnd->Lines->Add(RemoveLowChar(ToLog));
-		//this->LogWnd->Lines->Add(ToLog);
-		} else {
-			//this->LogWnd->Lines->AddStrings(DebugStr(ToLog,*Strings));
-			//this->LogWnd->Lines->AddStrings(Strings);
-			}
+	this->LogWnd->Lines->Add(RemoveLowChar(ToLog));
 	this->LogWnd->SelStart = OrgPos;
 	Perform(EM_SCROLLCARET,0,0);
 	this->LogWnd->Lines->EndUpdate();
@@ -44,17 +37,14 @@ try {
 		this->LogWnd->Lines->EndUpdate();
 		Strings->Free();
 		}
-	if (this->Refresh1->Checked) {
-		this->LogWnd->SelStart = this->LogWnd->GetTextLen();
-		Perform(EM_SCROLLCARET,0,0);
-		}
+	this->LogWnd->SelStart = this->LogWnd->GetTextLen();
+	Perform(EM_SCROLLCARET,0,0);
 }
 void __fastcall TLog::FormCreate(TObject *Sender)
 {
 this->LogWnd->Clear();
 this->LogWnd->Align = alClient;
 this->Header = "";
-this->TextColor = clBlack;
 }
 //---------------------------------------------------------------------------
 UnicodeString RemoveLowChar(UnicodeString Source)

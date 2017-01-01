@@ -14,19 +14,11 @@ class TLog : public TForm
 {
 __published:	// IDE-managed Components
 	TRichEdit *LogWnd;
-	TPopupMenu *PopupMenu;
-	TMenuItem *Copy1;
-	TMenuItem *Clear1;
-	TMenuItem *Refresh1;
-	TMenuItem *LineMode1;
-	TMenuItem *Debugstring1;
-	TMenuItem *Wordwrap1;
 	void __fastcall FormCreate(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
 	void Add(UnicodeString ToLog);
 	__fastcall TLog(TComponent* Owner);
-	TColor TextColor;
 	String Header;
 };
 UnicodeString RemoveLowChar(UnicodeString Source);

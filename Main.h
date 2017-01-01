@@ -17,17 +17,14 @@ class TClient: public TWSocketClient
 {
 public:
 String Rcvd;
-TColor Color;
 TWSocket* RemoteSocket;
 inline __fastcall ~TClient(void)
 {
 if (!Application->Terminated) {
-	Log->TextColor = Color;
 	Log->Header = "Connection Closed";
 	Log->Add("");
 	}
 this->RemoteSocket->Free();
-//this->Free();
 }
 };
 //---------------------------------------------------------------------------
