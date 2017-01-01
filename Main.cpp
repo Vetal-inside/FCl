@@ -74,8 +74,6 @@ Client->LineEnd = "\r\n";
 ((TClient*)Client)->RemoteSocket->OnBgException = BgException;
 ((TClient*)Client)->RemoteSocket->Addr = Form1->RealIP->Text;
 ((TClient*)Client)->RemoteSocket->Connect();
-Form1->StatusBar->Panels->operator [](1)->Text = IntToStr(WSocketServer->ClientCount);
-Form1->StatusBar->Panels->operator [](3)->Text = Client->GetPeerAddr();
 }
 
 void __fastcall TForm1::RemoteSessionConnected(TObject *Sender, WORD Error)
@@ -159,18 +157,6 @@ if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sende
 	((TClient*)Sender)->Rcvd = "";
 	}
 }
-
-void __fastcall TForm1::WSocketServerClientDisconnect(TObject *Sender, TWSocketClient *Client,
-		  WORD Error)
-{
-Form1->StatusBar->Panels->operator [](1)->Text = IntToStr(((TWSocketServer*)(((TClient*)Client)->Server))->ClientCount -1);
-if (((TWSocketServer*)(((TClient*)Client)->Server))->ClientCount > 1) {
-	Form1->StatusBar->Panels->operator [](3)->Text = ((TWSocketServer*)(((TClient*)Client)->Server))->Client[((TWSocketServer*)(((TClient*)Client)->Server))->ClientCount - 1]->GetPeerAddr();
-	} else {
-		Form1->StatusBar->Panels->operator [](3)->Text = "";
-		}
-}
-
 void __fastcall TForm1::RemoteSessionClosed(TObject *Sender, WORD Error)
 {
 ((TClient*)(((TWSocket*)Sender)->Owner))->Shutdown(1);

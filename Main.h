@@ -11,8 +11,6 @@
 #include "OverbyteIcsWSocket.hpp"
 #include "OverbyteIcsWSocketS.hpp"
 #include <Vcl.ComCtrls.hpp>
-//#include "uLog.h"
-//#include "Unit2.h"
 //---------------------------------------------------------------------------
 class TClient: public TWSocketClient
 {
@@ -38,17 +36,10 @@ __published:	// IDE-managed Components
 	TEdit *RealIP;
 	TLabel *Label4;
 	TLabel *Label5;
-	TStatusBar *StatusBar;
 	void __fastcall ListenBtnClick(TObject *Sender);
-	void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client,
-          WORD Error);
-	void __fastcall WSocketServerClientDisconnect(TObject *Sender, TWSocketClient *Client,
-          WORD Error);
+	void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error);
 	void __fastcall BgException(TObject *Sender, Exception *E, bool &CanClose);
 	void __fastcall WSocketServerSessionClosed(TObject *Sender, WORD ErrCode);
-
-
-
 private:
 	void __fastcall RemoteSessionConnected(TObject *Sender, WORD Error);
 	void __fastcall RemoteDataAvailable(TObject *Sender, WORD Error);

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 129
+  ClientHeight = 106
   ClientWidth = 542
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -107,35 +107,6 @@ object Form1: TForm1
     TabOrder = 6
     Text = '5.153.50.217'
   end
-  object StatusBar: TStatusBar
-    Left = 0
-    Top = 110
-    Width = 542
-    Height = 19
-    Panels = <
-      item
-        Alignment = taCenter
-        Bevel = pbNone
-        Text = 'Connections'
-        Width = 65
-      end
-      item
-        Alignment = taCenter
-        Text = '0'
-        Width = 25
-      end
-      item
-        Alignment = taCenter
-        Bevel = pbNone
-        Text = 'From'
-        Width = 35
-      end
-      item
-        Alignment = taCenter
-        Width = 50
-      end>
-    SizeGrip = False
-  end
   object WSocketServer: TWSocketServer
     LineEnd = #13#10
     Proto = 'tcp'
@@ -147,7 +118,6 @@ object Form1: TForm1
     OnSessionClosed = WSocketServerSessionClosed
     OnBgException = BgException
     Banner = 'Welcome to TcpSrv'
-    OnClientDisconnect = WSocketServerClientDisconnect
     OnClientConnect = WSocketServerClientConnect
     MultiListenSockets = <>
     Left = 496
