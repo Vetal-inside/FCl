@@ -47,30 +47,17 @@ this->LogWnd->Align = alClient;
 this->Header = "";
 }
 //---------------------------------------------------------------------------
-UnicodeString RemoveLowChar(UnicodeString Source)
+UnicodeString& TLog::RemoveLowChar(UnicodeString& Source)
 {
 int n;
-UnicodeString result;
-result.SetLength(Source.Length());
+UnicodeString* Result = new UnicodeString;
+Result->SetLength(Source.Length());
 for (n = 1; n < Source.Length()+1; n++) {
-	result[n] = _DebugStrLowChar(Source[n]);
+	if (((int)Source[n])<32) {
+		Result[n] = '.';
+		} else {
+			Result[n] = Source[n];
+			}
 	}
-return result;
+return *Result;
 }
-
-char _DebugStrLowChar(char c)
-{
-if (((int)c)<32) {
-	c = '.';
-	}
-return c;
-/*
-__asm{
-	cmp al, ' '
-	jae @Ok
-	mov al, '.'
-	@Ok:
-	}
-return c;*/
-}
-

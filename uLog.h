@@ -18,11 +18,10 @@ __published:	// IDE-managed Components
 private:	// User declarations
 public:		// User declarations
 	void Add(UnicodeString ToLog);
+	UnicodeString& RemoveLowChar(UnicodeString& Source);
 	__fastcall TLog(TComponent* Owner);
 	String Header;
 };
-UnicodeString RemoveLowChar(UnicodeString Source);
-char _DebugStrLowChar(char);
 //---------------------------------------------------------------------------
 extern PACKAGE TLog *Log;
 //---------------------------------------------------------------------------
