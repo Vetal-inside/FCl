@@ -52,8 +52,8 @@ try {
 		this->Output->Lines->EndUpdate();
 		Strings->Free();
 		}
-	this->Output->SelStart = this->Output->GetTextLen();
-	this->Output->Parent->Perform(EM_SCROLLCARET,0,0);
+this->Output->SelStart = this->Output->GetTextLen();
+this->Output->Parent->Perform(EM_SCROLLCARET,0,0);
 }
 
 UnicodeString& TLog::RemoveLowChar(UnicodeString& Source)

@@ -11,6 +11,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -106,21 +107,5 @@ object Form1: TForm1
     Height = 21
     TabOrder = 6
     Text = '5.153.50.217'
-  end
-  object WSocketServer: TWSocketServer
-    LineEnd = #13#10
-    Proto = 'tcp'
-    LocalAddr = '0.0.0.0'
-    LocalAddr6 = '::'
-    LocalPort = '0'
-    SocksLevel = '5'
-    ComponentOptions = []
-    OnSessionClosed = WSocketServerSessionClosed
-    OnBgException = BgException
-    Banner = 'Welcome to TcpSrv'
-    OnClientConnect = WSocketServerClientConnect
-    MultiListenSockets = <>
-    Left = 496
-    Top = 64
   end
 end
