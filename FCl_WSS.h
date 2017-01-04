@@ -4,6 +4,7 @@
 #include "OverbyteIcsWndControl.hpp"
 #include "OverbyteIcsWSocket.hpp"
 #include "OverbyteIcsWSocketS.hpp"
+#include "Unit2.h"
 
 class TClient: public TWSocketClient
 {
@@ -23,6 +24,7 @@ UnicodeString RemoteIP;
 UnicodeString RemoteAddress;
 UnicodeString OurLogin;
 bool logging;
+TLog* ServerLog;
 inline __fastcall virtual TServer(System::Classes::TComponent* AOwner) : TWSocketServer(AOwner) { }
 void inline __fastcall Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin,bool logging);
 void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error);

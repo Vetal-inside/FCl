@@ -5,7 +5,7 @@
 			<FrameworkType>VCL</FrameworkType>
 			<MainSource>ProjectFCl.cpp</MainSource>
 			<Base>True</Base>
-			<Config Condition="'$(Config)'==''">Release</Config>
+			<Config Condition="'$(Config)'==''">Debug</Config>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
 			<TargetedPlatforms>1</TargetedPlatforms>
 			<AppType>Application</AppType>
@@ -53,7 +53,7 @@
 			<PackageImports>DataSnapIndy10ServerTransport;bindcompfmx;fmx;rtl;dbrtl;IndySystem;DbxClientDriver;bindcomp;inetdb;DBXInterBaseDriver;DataSnapCommon;DataSnapClient;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;IndyProtocols;DBXMySQLDriver;dbxcds;soaprtl;bindengine;DBXOracleDriver;CustomIPTransport;dsnap;DBXInformixDriver;fmxase;IndyCore;DBXFirebirdDriver;inet;fmxobj;inetdbxpress;DBXSybaseASADriver;fmxdae;IPIndyImpl;dbexpress;$(PackageImports)</PackageImports>
 			<Multithreaded>true</Multithreaded>
 			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
-			<AllPackageLibs>rtl.lib;vcl.lib;IcsVclCBXE2Run.lib;IcsCommonCBXE2Run.lib</AllPackageLibs>
+			<AllPackageLibs>rtl.lib;vcl.lib;IcsVclCBXE2Run.lib;IcsCommonCBXE2Run.lib;DbxCommonDriver.lib;dsnap.lib;dbrtl.lib</AllPackageLibs>
 			<Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
 			<IncludePath>H:\tmp\OverbyteIcsV816\Lib\Debug\Win32\XE2\;$(IncludePath)</IncludePath>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
@@ -91,7 +91,7 @@
 			<ILINK_TranslatedLibraryPath>$(BDSLIB)\$(PLATFORM)\debug\$(LANGDIR);$(ILINK_TranslatedLibraryPath)</ILINK_TranslatedLibraryPath>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-			<LinkPackageImports>rtl.bpi;vcl.bpi;IcsVclCBXE2Run.bpi;IcsCommonCBXE2Run.bpi</LinkPackageImports>
+			<LinkPackageImports>rtl.bpi;vcl.bpi;IcsVclCBXE2Run.bpi;IcsCommonCBXE2Run.bpi;DbxCommonDriver.bpi;dsnap.bpi;dbrtl.bpi</LinkPackageImports>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -104,7 +104,7 @@
 			<UsingDelphiRTL>false</UsingDelphiRTL>
 			<DynamicRTL>false</DynamicRTL>
 			<UsePackages>false</UsePackages>
-			<LinkPackageStatics>rtl.lib;vcl.lib;IcsVclCBXE2Run.lib;IcsCommonCBXE2Run.lib</LinkPackageStatics>
+			<LinkPackageStatics>rtl.lib;vcl.lib;IcsVclCBXE2Run.lib;IcsCommonCBXE2Run.lib;DbxCommonDriver.lib;dsnap.lib;dbrtl.lib</LinkPackageStatics>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -129,8 +129,8 @@
 				<DependentOn>Unit2.h</DependentOn>
 				<BuildOrder>3</BuildOrder>
 			</CppCompile>
-			<FormResources Include="Main.dfm"/>
 			<FormResources Include="Unit2.dfm"/>
+			<FormResources Include="Main.dfm"/>
 			<BuildConfiguration Include="Release">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>

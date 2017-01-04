@@ -28,6 +28,7 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text,this->CheckBox1->Checked);
+	Server->ServerLog = Log;
 	Server->Listen();
 	LocalPort->Enabled = false;
 	RemotePort->Enabled = false;

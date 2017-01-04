@@ -1,13 +1,11 @@
 #include "FCl_WSS.h"
 #include "Unit2.h"
 
-extern TLog* Log;
-
 inline __fastcall TClient::~TClient(void)
 {
 if (!Application->Terminated) {
-	Log->Header->operator =("Connection Closed");
-	Log->Add("");
+	((TServer*)this->Owner)->ServerLog->Header->operator =("Connection Closed");
+	((TServer*)this->Owner)->ServerLog->Add("",false);
 	}
 this->RemoteSocket->Free();
 }
@@ -57,18 +55,18 @@ void __fastcall TServer::RemoteSessionConnected(TObject *Sender, WORD Error)
 {
 if (Error != 0) {exit(Error);};
 if (this->logging) {
-	Log->Header->operator =("Connection Opened");
-	Log->Add("");
+	this->ServerLog->Header->operator =("Connection Opened");
+	this->ServerLog->Add("",false);
 	}
 if (((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd != "") {
 	if (this->logging) {
-		Log->Header->operator =("Open From Local 1");
-		Log->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
+		this->ServerLog->Header->operator =("Rcvd from miner");
+		this->ServerLog->AddPrettyView(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd = ExchangeString(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 	if (this->logging) {
-		Log->Header->operator =("Open From Local 2");
-		Log->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
+		this->ServerLog->Header->operator =("Sent to pool");
+		this->ServerLog->AddPrettyView(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->RemoteSocket->SendStr(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 	((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd="";
@@ -82,15 +80,15 @@ if (Error != 0) {exit(Error);};
 FromRemote = ((TClient*)(((TWSocket*)Sender)))->ReceiveStr();
 if (FromRemote != "") {
 	if (this->logging) {
-		Log->Header->operator =("From Remote");
-		Log->Add(FromRemote);
+		this->ServerLog->Header->operator =("From pool");
+		this->ServerLog->AddPrettyView(FromRemote);
 		}
 	if (((TClient*)(((TWSocket*)Sender)->Owner))->State == wsConnected) {
 		((TClient*)(((TWSocket*)Sender)->Owner))->SendStr(FromRemote);
 		} else {
 			if (this->logging) {
-				Log->Header->operator =("Error: Local has closed");
-				Log->Add("");
+				this->ServerLog->Header->operator =("Error: Local has closed");
+				this->ServerLog->Add("",false);
 				}
 			((TClient*)(((TWSocket*)Sender)->Owner))->CloseDelayed();
 			};
@@ -122,13 +120,13 @@ if (Error != 0) {exit(Error);};
 ((TClient*)Sender)->Rcvd = ((TClient*)Sender)->Rcvd + ((TClient*)Sender)->ReceiveStr();
 if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sender)->Rcvd != "")) {
 	if (this->logging) {
-		Log->Header->operator =("From Local 1");
-		Log->Add(((TClient*)Sender)->Rcvd);
+		this->ServerLog->Header->operator =("Rcvd from miner");
+		this->ServerLog->AddPrettyView(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->Rcvd = ExchangeString(((TClient*)Sender)->Rcvd);
 	if (this->logging) {
-		Log->Header->operator =("From Local 2");
-		Log->Add(((TClient*)Sender)->Rcvd);
+		this->ServerLog->Header->operator =("Sent to pool");
+		this->ServerLog->AddPrettyView(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->RemoteSocket->SendStr(((TClient*)Sender)->Rcvd);
 	((TClient*)Sender)->Rcvd = "";
