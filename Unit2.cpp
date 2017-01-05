@@ -38,7 +38,7 @@ bool flag=0;
 if (!this->Output->Parent->Visible) {
 	this->Output->Parent->Show();
 	}
-unsigned int i,j=1;//split complex JSON string into simple
+int i,j=1;//split complex JSON string into simple
 std::vector<UnicodeString> ToLogArr;
 ToLogArr.resize(0);
 for (i = 1; i < ToLog.Length()+1; i++) {
@@ -52,7 +52,7 @@ ToLogArr.resize(ToLogArr.size()+1);
 ToLogArr.operator [](ToLogArr.size()-1).operator =(ToLog.SubString(j,i-j));
 __try {
 	this->Output->Lines->Add(DateTimeToStr(Now())+" "+*this->Header);
-	for (i = 0; i < ToLogArr.size(); i++) {//and show each of them
+	for (i = 0; i < (int)ToLogArr.size(); i++) {//and show each of them
 		flag=false;
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(ToLogArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
