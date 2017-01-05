@@ -5,6 +5,7 @@
 
 #include "Unit2.h"
 #include <DBXJSON.hpp>
+#include <vector>
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
@@ -29,88 +30,75 @@ this->Body = new UnicodeString;
 this->Output = RE;
 }
 
-void TLog::Add(UnicodeString ToLog, bool IsPretty)
-{
-if (!IsPretty) {
-	this->Body->operator =(ToLog);
-	}
-RemoveLowChar();
-int OrgPos;
-TStringList* Strings = new TStringList();
-OrgPos = this->Output->SelStart;
-if (!this->Output->Parent->Visible) {
-	this->Output->Parent->Show();
-	}
-this->Output->Lines->BeginUpdate();
-try {
-	this->Output->SelStart = this->Output->GetTextLen();
-	if ((this->Output->Lines->Count > 0)&&(this->Output->Lines->operator [](this->Output->Lines->Count - 1) != "")) {
-		this->Output->Lines->Add("");
-		}
-	this->Output->Lines->Add(DateTimeToStr(Now())+" "+*this->Header);
-	this->Output->Lines->Add(*this->Body);
-	this->Output->SelStart = OrgPos;
-	this->Output->Parent->Perform(EM_SCROLLCARET,0,0);
-	this->Output->Lines->EndUpdate();
-	Strings->Free();
-	} catch (...) {
-		this->Output->Lines->EndUpdate();
-		Strings->Free();
-		}
-this->Output->SelStart = this->Output->GetTextLen();
-this->Output->Parent->Perform(EM_SCROLLCARET,0,0);
-}
-
-void TLog::AddPrettyView(UnicodeString& ToLog)
+void TLog::Add(UnicodeString ToLog)
 {
 TJSONObject *json_root;
 TJSONArray *json_array;
-this->Body->operator =(ToLog);
-__try {
-	json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(*this->Body),0);
-	if ((json_root)&&(json_root->Get("id"))) {
-		if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
-			if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")) {
-				json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-				this->Body->operator =("Connecting to pool: "+json_array->Get(2)->ToString()+":"+json_array->Get(3)->ToString());
-				this->Add(*this->Body,true);
-				}
-			if ((json_root->Get("result"))&&(json_root->Get("error")->JsonValue->ToString()=="null")) {
-				json_array = (TJSONArray*) json_root->Get("result")->JsonValue;
-				this->Body->operator =("Succesfully connected! Params: "+json_array->Get(0)->ToString()+", "+json_array->Get(1)->ToString());
-				this->Add(*this->Body,true);
-				}
-			}//mining.subscribe END
-		if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
-			if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")) {
-				json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-				this->Body->operator =("Autorizing : "+json_array->Get(0)->ToString()+":"+json_array->Get(1)->ToString());
-				this->Add(*this->Body,true);
-				}
-			if ((json_root->Get("result"))&&(json_root->Get("result")->JsonValue->ToString()=="true")) {
-				this->Body->operator =("Succesfully authorized!");
-				this->Add(*this->Body,true);
-				}
-			}//mining.authorize END
-		if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
-			if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")) {
-				json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-				this->Body->operator =("Sending share from : "+json_array->Get(0)->ToString());
-				this->Add(*this->Body,true);
-				}
-			if ((json_root->Get("result"))&&(json_root->Get("result")->JsonValue->ToString()=="true")) {
-				this->Body->operator =("Share accepted");
-				this->Add(*this->Body,true);
-				}
-			}//mining.submit END
-		} else {
-			this->Add(ToLog,false);
-			}
+bool flag=0;
+if (!this->Output->Parent->Visible) {
+	this->Output->Parent->Show();
 	}
-	__finally {
-		json_root->Free();
+unsigned int i,j=1;//split complex JSON string into simple
+std::vector<UnicodeString> ToLogArr;
+ToLogArr.resize(0);
+for (i = 1; i < ToLog.Length()+1; i++) {
+	if (ToLog[i]=='\n') {
+		ToLogArr.resize(ToLogArr.size()+1);
+		ToLogArr.operator [](ToLogArr.size()-1).operator =(ToLog.SubString(j,i-j));
+		j=i+1;
 		}
-return ;
+	}
+ToLogArr.resize(ToLogArr.size()+1);
+ToLogArr.operator [](ToLogArr.size()-1).operator =(ToLog.SubString(j,i-j));
+__try {
+	this->Output->Lines->Add(DateTimeToStr(Now())+" "+*this->Header);
+	for (i = 0; i < ToLogArr.size(); i++) {//and show each of them
+		flag=false;
+		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(ToLogArr.operator [](i)),0);
+		if ((json_root)&&(json_root->Get("id"))) {
+			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")) {
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					this->Body->operator =("Connecting to pool: "+json_array->Get(2)->ToString()+":"+json_array->Get(3)->ToString());
+					flag=true;
+					}
+				if ((json_root->Get("result"))&&(json_root->Get("error")->JsonValue->ToString()=="null")) {
+					json_array = (TJSONArray*) json_root->Get("result")->JsonValue;
+					this->Body->operator =("Succesfully connected! Params: "+json_array->Get(0)->ToString()+", "+json_array->Get(1)->ToString());
+					flag=true;
+					}
+				}//mining.subscribe END
+			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")) {
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					this->Body->operator =("Autorizing : "+json_array->Get(0)->ToString()+":"+json_array->Get(1)->ToString());
+					flag=true;
+					}
+				if ((json_root->Get("result"))&&(json_root->Get("result")->JsonValue->ToString()=="true")) {
+					this->Body->operator =("Succesfully authorized!");
+					flag=true;
+					}
+				}//mining.authorize END
+			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")) {
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					this->Body->operator =("Sending share from : "+json_array->Get(0)->ToString());
+					flag=true;
+					}
+				if ((json_root->Get("result"))&&(json_root->Get("result")->JsonValue->ToString()=="true")) {
+					this->Body->operator =("Share accepted");
+					flag=true;
+					}
+				}//mining.submit END
+			};
+		if (!flag) {
+			this->Body->operator =(ToLogArr.operator [](i));
+			}
+		this->Output->Lines->Add(*this->Body);
+		};
+	}__finally {
+		if (json_root) {json_root->Free();};
+		};
 }
 
 void TLog::RemoveLowChar()
