@@ -1,9 +1,10 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Form1'
-  ClientHeight = 106
-  ClientWidth = 542
+  BorderStyle = bsSingle
+  Caption = 'FCl project: Windows MITM proxy for proprietary miners'
+  ClientHeight = 108
+  ClientWidth = 721
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +12,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCanResize = FormCanResize
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
@@ -48,6 +50,13 @@ object Form1: TForm1
     Width = 106
     Height = 13
     Caption = 'Replace wallet/worker'
+  end
+  object Label6: TLabel
+    Left = 536
+    Top = 8
+    Width = 64
+    Height = 13
+    Caption = 'Miner version'
   end
   object RemotePort: TEdit
     Left = 447
@@ -107,5 +116,28 @@ object Form1: TForm1
     Height = 21
     TabOrder = 6
     Text = '5.153.50.217'
+  end
+  object ComboBox1: TComboBox
+    Left = 536
+    Top = 24
+    Width = 169
+    Height = 21
+    Style = csDropDownList
+    ItemIndex = 0
+    TabOrder = 7
+    Text = 'Claymore'#39's ZCash miner v9.1'
+    OnChange = ComboBox1Change
+    Items.Strings = (
+      'Claymore'#39's ZCash miner v9.1'
+      'Claymore'#39's ZCash miner v9.3')
+  end
+  object Button1: TButton
+    Left = 536
+    Top = 76
+    Width = 75
+    Height = 21
+    Caption = 'Settings'
+    TabOrder = 8
+    Visible = False
   end
 end

@@ -142,3 +142,40 @@ void __fastcall TServer::BgException(TObject *Sender, Exception *E, bool &CanClo
 {
 CanClose = true;
 }
+
+TLogic::TLogic()
+{
+this->minerVersion = cm91;
+}
+
+TLogic::TLogic(int vers)
+{
+this->minerVersion = (Version)vers;
+}
+
+void TLogic::UpdateVersion(int vers)
+{
+this->minerVersion = (Version)vers;
+}
+
+void TLogic::SetServerLogic(TServer* Server)
+{
+switch (this->minerVersion) {
+	case cm91:
+		Server->SslEnable = false;
+	break;
+	case cm93:
+		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
+		Server->SslContext->SslCAFile = "rootCA.pem";
+		Server->SslContext->SslCertFile = "flypool.org.pem";
+		Server->SslContext->SslPrivKeyFile = "flypool.org.key";
+		Server->SslEnable = true;
+	break;
+	;
+}
+}
+
+TLogic::~TLogic()
+{
+
+}

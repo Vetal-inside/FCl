@@ -12,14 +12,6 @@
 #include "OverbyteIcsWSocketS.hpp"
 #include <Vcl.ComCtrls.hpp>
 //---------------------------------------------------------------------------
-/*class TClient: public TWSocketClient
-{
-public:
-String Rcvd;
-TWSocket* RemoteSocket;
-inline __fastcall ~TClient(void);
-};*/
-//---------------------------------------------------------------------------
 class TForm1 : public TForm
 {
 __published:	// IDE-managed Components
@@ -35,8 +27,14 @@ __published:	// IDE-managed Components
 	TEdit *RealIP;
 	TLabel *Label4;
 	TLabel *Label5;
+	TComboBox *ComboBox1;
+	TLabel *Label6;
+	TButton *Button1;
 	void __fastcall ListenBtnClick(TObject *Sender);
 	void __fastcall FormCreate(TObject *Sender);
+	void __fastcall FormCanResize(TObject *Sender, int &NewWidth, int &NewHeight, bool &Resize);
+	void __fastcall ComboBox1Change(TObject *Sender);
+
 private:
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
