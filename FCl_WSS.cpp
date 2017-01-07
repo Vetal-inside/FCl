@@ -10,7 +10,7 @@ if (!Application->Terminated) {
 this->RemoteSocket->Free();
 }
 
-void inline __fastcall TServer::Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin,bool logging)
+void inline __fastcall TServer::Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin)
 {
 this->LineEnd = "#13#10";
 this->Proto = "tcp";
@@ -146,36 +146,55 @@ CanClose = true;
 TLogic::TLogic()
 {
 this->minerVersion = cm91;
+this->Pools = new std::vector<UnicodeString>;
+this->Pools->resize(0);
+this->logging = true;
+this->UpdateSettings(this->minerVersion);
 }
 
 TLogic::TLogic(int vers)
 {
 this->minerVersion = (Version)vers;
+this->Pools = new std::vector<UnicodeString>;
+this->Pools->resize(0);
+this->logging = true;
+this->UpdateSettings(this->minerVersion);
 }
 
 void TLogic::UpdateSettings(int vers)
 {
 this->minerVersion = (Version)vers;
+switch (this->minerVersion) {
+	case cm91:
+	case cm93:
+		this->Pools->resize(4);
+		this->Pools->operator [](0) = "us1-zcash.flypool.org";//:3333
+		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//:3333
+		this->Pools->operator [](2) = "zec-eu1.nanopool.org";//:6666
+		this->Pools->operator [](3) = "zec.suprnova.cc";//:2142
+		break;
+	}
+
 }
 
 void TLogic::SetServerLogic(TServer* Server)
 {
+Server->logging = this->logging;
 switch (this->minerVersion) {
 	case cm91:
 		Server->SslEnable = false;
-	break;
+		break;
 	case cm93:
 		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
 		Server->SslContext->SslCAFile = "rootCA.pem";
 		Server->SslContext->SslCertFile = "flypool.org.pem";
 		Server->SslContext->SslPrivKeyFile = "flypool.org.key";
 		Server->SslEnable = true;
-	break;
-	;
-}
+		break;
+	}
 }
 
 TLogic::~TLogic()
 {
-
+delete[] this->Pools;
 }

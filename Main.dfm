@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 0
-  Top = 0
+  Left = 267
+  Top = 290
   BorderStyle = bsSingle
   Caption = 'FCl project: Windows MITM proxy for proprietary miners'
   ClientHeight = 108
@@ -12,6 +12,7 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesigned
   OnCanResize = FormCanResize
   OnShow = FormShow
   PixelsPerInch = 96

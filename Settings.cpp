@@ -4,7 +4,6 @@
 #pragma hdrstop
 
 #include "Settings.h"
-#include "Main.h"
 
 #pragma resource "*.dfm"
 //---------------------------------------------------------------------------
@@ -13,7 +12,7 @@ __fastcall TForm3::TForm3(TComponent* Owner)
 {
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm3::FormCreate(TObject *Sender)
+void __fastcall TForm3::FormShow(TObject *Sender)
 {
 NetworkConfigs = new std::vector<TNetworkConfig>(0);
 this->LoadNetworkSettings();
@@ -22,7 +21,8 @@ for (i = 0; i < NetworkConfigs->size(); i++) {
 	this->ComboBox4->Items->Add(NetworkConfigs->operator [](i).FriendlyName);
 	}
 this->ComboBox4->ItemIndex = 0;
-this->FillData();
+this->FillHostsData();
+this->FillNetworkData();
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm3::LoadNetworkSettings()
@@ -154,7 +154,16 @@ if (pAddresses) {
 	};
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm3::FillData()
+void __fastcall TForm3::FillHostsData()
+{
+this->Memo1->Lines->Clear();
+int i;
+for (i = 0; i < Logic->Pools->size(); i++) {
+	this->Memo1->Lines->Add("8.8.8.10"+IntToStr(i)+"  "+Logic->Pools->operator [](i));
+	};
+}
+
+void __fastcall TForm3::FillNetworkData()
 {
 this->Memo2->Lines->Clear();
 int i = this->ComboBox4->ItemIndex;
@@ -162,30 +171,25 @@ UnicodeString name,mask,gateway;
 name = NetworkConfigs->operator [](i).FriendlyName;
 mask = NetworkConfigs->operator [](i).Mask;
 gateway = NetworkConfigs->operator [](i).Gateway;
-
 this->Memo2->Lines->Add("netsh interface ipv4 add dnsservers \""+name+"\" "+NetworkConfigs->operator [](0).DNS[0]);
 if (NetworkConfigs->operator [](0).DNS.size()==2) {
 	this->Memo2->Lines->Add("netsh interface ipv4 add dnsservers \""+name+"\" "+NetworkConfigs->operator [](0).DNS[1]+" index=2");
 	}
 this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address="+NetworkConfigs->operator [](i).ipAddress+" mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.100 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.101 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.102 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.103 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.104 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.105 mask="+mask+" gateway="+gateway);
-this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.106 mask="+mask+" gateway="+gateway);
+for (i = 0; i < Logic->Pools->size(); i++) {
+	this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.10"+IntToStr(i)+" mask="+mask+" gateway="+gateway);
+	}
 this->Memo2->Lines->Add("pause");
 }
 //---------------------------------------------------------------------------
 TNetworkConfig::TNetworkConfig()
 {
-this->AdapterName = "emply";
-this->AdapterDescription = "emply";
-this->FriendlyName = "emply";
-this->ipAddress = "emply";
-this->Mask = "emply";
-this->Gateway = "emply";
+this->AdapterName = "empty";
+this->AdapterDescription = "empty";
+this->FriendlyName = "empty";
+this->ipAddress = "empty";
+this->Mask = "empty";
+this->Gateway = "empty";
 this->DNS.resize(0);
 }
 
@@ -195,7 +199,6 @@ TNetworkConfig::~TNetworkConfig()
 }
 void __fastcall TForm3::ComboBox4Change(TObject *Sender)
 {
-this->FillData();
+this->FillNetworkData();
 }
 //---------------------------------------------------------------------------
-

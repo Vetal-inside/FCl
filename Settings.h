@@ -10,6 +10,9 @@
 #include <Vcl.ComCtrls.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
+#include "Main.h"
+#include "FCl_WSS.h"
+
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
@@ -34,22 +37,21 @@
 class TForm3 : public TForm
 {
 __published:	// IDE-managed Components
-	TComboBox *ComboBox3;
-	TLabel *Label3;
 	TLabel *Label4;
 	TComboBox *ComboBox4;
 	TMemo *Memo1;
 	TMemo *Memo2;
 	TLabel *Label1;
 	TLabel *Label2;
-	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall ComboBox4Change(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
 
 private:	// User declarations
 public:		// User declarations
 	__fastcall TForm3(TComponent* Owner);
 	void __fastcall LoadNetworkSettings();
-	void __fastcall FillData();
+	void __fastcall FillHostsData();
+	void __fastcall FillNetworkData();
 };
 //---------------------------------------------------------------------------
 class TNetworkConfig
@@ -68,5 +70,6 @@ TNetworkConfig();
 //---------------------------------------------------------------------------
 extern PACKAGE TForm3 *Form3;
 extern std::vector<TNetworkConfig>* NetworkConfigs;
+extern TLogic* Logic;
 //---------------------------------------------------------------------------
 #endif

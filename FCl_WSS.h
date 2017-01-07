@@ -5,6 +5,7 @@
 #include "OverbyteIcsWSocket.hpp"
 #include "OverbyteIcsWSocketS.hpp"
 #include "Unit2.h"
+#include <vector>
 
 class TLogic;
 
@@ -29,7 +30,7 @@ bool logging;
 TLog* ServerLog;
 TLogic* ServerLogic;
 inline __fastcall virtual TServer(System::Classes::TComponent* AOwner) : TSslWSocketServer(AOwner) { }
-void inline __fastcall Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin,bool logging);
+void inline __fastcall Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin);
 void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error);
 void __fastcall RemoteSessionConnected(TObject *Sender, WORD Error);
 void __fastcall RemoteDataAvailable(TObject *Sender, WORD Error);
@@ -45,6 +46,9 @@ class TLogic
 {
 public:
 Version minerVersion;
+std::vector<UnicodeString>* Pools;
+bool logging;//NAU
+
 TLogic();
 TLogic(int);
 void UpdateSettings(int);
