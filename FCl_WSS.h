@@ -6,6 +6,8 @@
 #include "OverbyteIcsWSocketS.hpp"
 #include "Unit2.h"
 
+class TLogic;
+
 class TClient: public TSslWSocketClient
 {
 public:
@@ -25,6 +27,7 @@ UnicodeString RemoteAddress;
 UnicodeString OurLogin;
 bool logging;
 TLog* ServerLog;
+TLogic* ServerLogic;
 inline __fastcall virtual TServer(System::Classes::TComponent* AOwner) : TSslWSocketServer(AOwner) { }
 void inline __fastcall Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin,bool logging);
 void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error);

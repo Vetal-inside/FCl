@@ -30,7 +30,6 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text,this->CheckBox1->Checked);
-	Server->ServerLog = Log;
 	Server->Listen();
 	Logic->SetServerLogic(Server);
 	LocalPort->Enabled = false;
@@ -69,6 +68,8 @@ Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 SslContext = new TSslContext((TComponent*)Form1);
 Server = new TServer((TComponent*)Form1);
 Server->SslContext = SslContext;
+Server->ServerLog = Log;
+Server->ServerLogic = Logic;
 Logic->SetServerLogic(Server);
 }
 //---------------------------------------------------------------------------
