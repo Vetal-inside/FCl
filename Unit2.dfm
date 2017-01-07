@@ -1,9 +1,9 @@
 object Form2: TForm2
-  Left = 0
-  Top = 0
+  Left = 208
+  Top = 153
   Caption = 'Log'
   ClientHeight = 218
-  ClientWidth = 1034
+  ClientWidth = 514
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,6 +11,7 @@ object Form2: TForm2
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesigned
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

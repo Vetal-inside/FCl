@@ -47,7 +47,7 @@ public:
 Version minerVersion;
 TLogic();
 TLogic(int);
-void UpdateVersion(int);
+void UpdateSettings(int);
 void SetServerLogic(TServer*);
 ~TLogic();
 };

@@ -31,9 +31,10 @@ __published:	// IDE-managed Components
 	TLabel *Label6;
 	TButton *Button1;
 	void __fastcall ListenBtnClick(TObject *Sender);
-	void __fastcall FormCreate(TObject *Sender);
 	void __fastcall FormCanResize(TObject *Sender, int &NewWidth, int &NewHeight, bool &Resize);
 	void __fastcall ComboBox1Change(TObject *Sender);
+	void __fastcall FormShow(TObject *Sender);
+	void __fastcall Button1Click(TObject *Sender);
 
 private:
 public:		// User declarations

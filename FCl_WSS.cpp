@@ -153,7 +153,7 @@ TLogic::TLogic(int vers)
 this->minerVersion = (Version)vers;
 }
 
-void TLogic::UpdateVersion(int vers)
+void TLogic::UpdateSettings(int vers)
 {
 this->minerVersion = (Version)vers;
 }

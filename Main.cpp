@@ -6,6 +6,7 @@
 #include "Main.h"
 #include "Unit2.cpp"
 #include "FCl_WSS.cpp"
+#include "Settings.cpp"
 
 //---------------------------------------------------------------------------
 
@@ -16,10 +17,12 @@
 
 TForm1 *Form1;
 TForm2 *Form2;
+TForm3 *Form3;
 TLog* Log;
 TServer* Server;
 TSslContext* SslContext;
 TLogic* Logic;
+std::vector<TNetworkConfig>* NetworkConfigs;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
@@ -30,8 +33,8 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text,this->CheckBox1->Checked);
-	Server->Listen();
 	Logic->SetServerLogic(Server);
+	Server->Listen();
 	LocalPort->Enabled = false;
 	RemotePort->Enabled = false;
 	RemoteAddr->Enabled = false;
@@ -62,7 +65,13 @@ void __fastcall TForm1::FormCanResize(TObject *Sender, int &NewWidth, int &NewHe
 Resize = false;
 }
 //---------------------------------------------------------------------------
-void __fastcall TForm1::FormCreate(TObject *Sender)
+
+void __fastcall TForm1::ComboBox1Change(TObject *Sender)
+{
+Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::FormShow(TObject *Sender)
 {
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 SslContext = new TSslContext((TComponent*)Form1);
@@ -74,8 +83,8 @@ Logic->SetServerLogic(Server);
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::ComboBox1Change(TObject *Sender)
+void __fastcall TForm1::Button1Click(TObject *Sender)
 {
-Logic->UpdateVersion(Form1->ComboBox1->ItemIndex);
+Form3->Show();
 }
 //---------------------------------------------------------------------------

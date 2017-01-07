@@ -13,7 +13,7 @@ object Form1: TForm1
   Font.Style = []
   OldCreateOrder = False
   OnCanResize = FormCanResize
-  OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -138,6 +138,6 @@ object Form1: TForm1
     Height = 21
     Caption = 'Settings'
     TabOrder = 8
-    Visible = False
+    OnClick = Button1Click
   end
 end
