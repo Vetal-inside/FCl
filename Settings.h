@@ -50,6 +50,7 @@ private:	// User declarations
 public:		// User declarations
 	__fastcall TForm3(TComponent* Owner);
 	void __fastcall LoadNetworkSettings();
+	void __fastcall FillAdaptersData();
 	void __fastcall FillHostsData();
 	void __fastcall FillNetworkData();
 };

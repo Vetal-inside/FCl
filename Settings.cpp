@@ -14,13 +14,8 @@ __fastcall TForm3::TForm3(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TForm3::FormShow(TObject *Sender)
 {
-NetworkConfigs = new std::vector<TNetworkConfig>(0);
 this->LoadNetworkSettings();
-unsigned int i;
-for (i = 0; i < NetworkConfigs->size(); i++) {
-	this->ComboBox4->Items->Add(NetworkConfigs->operator [](i).FriendlyName);
-	}
-this->ComboBox4->ItemIndex = 0;
+this->FillAdaptersData();
 this->FillHostsData();
 this->FillNetworkData();
 }
@@ -154,11 +149,21 @@ if (pAddresses) {
 	};
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm3::FillAdaptersData()
+{
+unsigned int i;
+this->ComboBox4->Items->Clear();
+for (i = 0; i < NetworkConfigs->size(); i++) {
+	this->ComboBox4->Items->Add(NetworkConfigs->operator [](i).FriendlyName);
+	}
+this->ComboBox4->ItemIndex = 0;
+}
+//---------------------------------------------------------------------------
 void __fastcall TForm3::FillHostsData()
 {
 this->Memo1->Lines->Clear();
 int i;
-for (i = 0; i < Logic->Pools->size(); i++) {
+for (i = 0; i < (int)Logic->Pools->size(); i++) {
 	this->Memo1->Lines->Add("8.8.8.10"+IntToStr(i)+"  "+Logic->Pools->operator [](i));
 	};
 }
@@ -176,7 +181,7 @@ if (NetworkConfigs->operator [](0).DNS.size()==2) {
 	this->Memo2->Lines->Add("netsh interface ipv4 add dnsservers \""+name+"\" "+NetworkConfigs->operator [](0).DNS[1]+" index=2");
 	}
 this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address="+NetworkConfigs->operator [](i).ipAddress+" mask="+mask+" gateway="+gateway);
-for (i = 0; i < Logic->Pools->size(); i++) {
+for (i = 0; i < (int)Logic->Pools->size(); i++) {
 	this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.10"+IntToStr(i)+" mask="+mask+" gateway="+gateway);
 	}
 this->Memo2->Lines->Add("pause");

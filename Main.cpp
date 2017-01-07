@@ -75,6 +75,8 @@ Resize = false;
 void __fastcall TForm1::ComboBox1Change(TObject *Sender)
 {
 Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+Form3->LoadNetworkSettings();
+Form3->FillAdaptersData();
 Form3->FillHostsData();
 Form3->FillNetworkData();
 switch (Form1->ComboBox1->ItemIndex) {
@@ -92,6 +94,7 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 {
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+NetworkConfigs = new std::vector<TNetworkConfig>(0);
 SslContext = new TSslContext((TComponent*)Form1);
 Server = new TServer((TComponent*)Form1);
 Server->SslContext = SslContext;

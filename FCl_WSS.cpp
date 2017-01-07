@@ -168,10 +168,10 @@ switch (this->minerVersion) {
 	case cm91:
 	case cm93:
 		this->Pools->resize(4);
-		this->Pools->operator [](0) = "us1-zcash.flypool.org";//:3333
-		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//:3333
-		this->Pools->operator [](2) = "zec-eu1.nanopool.org";//:6666
-		this->Pools->operator [](3) = "zec.suprnova.cc";//:2142
+		this->Pools->operator [](0) = "us1-zcash.flypool.org";//Normal 3333		SSL 3443
+		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//Normal 3333		SSL 3443
+		this->Pools->operator [](2) = "zec-eu1.nanopool.org";//	Normal 6666     SSL 6633
+		this->Pools->operator [](3) = "zec.suprnova.cc";//		Normal 2142		SSL 2242
 		break;
 	}
 
