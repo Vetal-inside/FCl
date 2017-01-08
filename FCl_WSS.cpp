@@ -186,9 +186,9 @@ switch (this->minerVersion) {
 		break;
 	case cm93:
 		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
-		Server->SslContext->SslCAFile = "rootCA.pem";
-		Server->SslContext->SslCertFile = "flypool.org.pem";
-		Server->SslContext->SslPrivKeyFile = "flypool.org.key";
+		Server->SslContext->SslCAFile = "CA.pem";
+		Server->SslContext->SslCertFile = "FCl.pem";
+		Server->SslContext->SslPrivKeyFile = "FCl.key";
 		Server->SslEnable = true;
 		break;
 	}
