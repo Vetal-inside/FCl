@@ -85,11 +85,52 @@ __try {
 					this->Body->operator =("Sending share from : "+json_array->Get(0)->ToString());
 					flag=true;
 					}
-				if ((json_root->Get("result"))&&(json_root->Get("result")->JsonValue->ToString()=="true")) {
-					this->Body->operator =("Share accepted");
-					flag=true;
+				if (json_root->Get("result")) {
+					if (json_root->Get("result")->JsonValue->ToString()=="true") {
+						this->Body->operator =("Share accepted");
+						flag=true;
+						}
+					if (json_root->Get("result")->JsonValue->ToString()=="null") {
+						json_array = (TJSONArray*) json_root->Get("error")->JsonValue;
+						this->Body->operator =("Share rejected. Reason: "+json_array->Get(1)->ToString()+", error id "+json_array->Get(0)->ToString());
+						flag=true;
+						}
 					}
 				}//mining.submit END
+			if (json_root->Get("id")->JsonValue->ToString() == "5") {//mining.extranonce.subscribe BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.extranonce.subscribe\"")) {
+					this->Body->operator =("Requesting extranonce.subscribe...");
+					flag=true;
+					}
+				if (json_root->Get("result")) {
+					if (json_root->Get("result")->JsonValue->ToString()=="true") {
+						this->Body->operator =("Extranonce.subscribe succesful!");
+						flag=true;
+						}
+					}
+				}//mining.extranonce.subscribe END
+			if (json_root->Get("id")->JsonValue->ToString() == "null") {//mining.set_target/notify/set_extranonce BEGIN
+				if (json_root->Get("method")) {
+					if (json_root->Get("method")->JsonValue->ToString() == "\"mining.set_target\""){
+						json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+						this->Body->operator =("Pool set new target with params: "+json_array->Get(0)->ToString());
+						flag=true;
+						}
+					if (json_root->Get("method")->JsonValue->ToString() == "\"mining.set_extranonce\""){
+						json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+						this->Body->operator =("Pool set new extranonce with params: "+json_array->Get(0)->ToString());
+						flag=true;
+						}
+					if (json_root->Get("method")->JsonValue->ToString() == "\"mining.notify\""){
+						json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+						this->Body->operator =("mining.notify with params: ");
+						for (j = 0; j < json_array->Size(); j++) {
+							this->Body->operator +=(json_array->Get(j)->ToString()+", ");
+							}
+						flag=true;
+						}
+					}
+				}//mining.set_target/notify/set_extranonce BEGIN
 			};
 		if (!flag) {
 			this->Body->operator =(ToLogArr.operator [](i));
