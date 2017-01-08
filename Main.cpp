@@ -84,6 +84,7 @@ switch (Form1->ComboBox1->ItemIndex) {
 		Form1->LocalPort->Text = "3333";
 		break;
 	case 1 :
+	case 2 :
 		Form1->LocalPort->Text = "3443";
 		break;
 	;

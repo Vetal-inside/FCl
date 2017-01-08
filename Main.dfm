@@ -130,7 +130,8 @@ object Form1: TForm1
     OnChange = ComboBox1Change
     Items.Strings = (
       'Claymore'#39's ZCash miner v9.1'
-      'Claymore'#39's ZCash miner v9.3')
+      'Claymore'#39's ZCash miner v9.3'
+      'Claymore'#39's ZCash miner v10.0')
   end
   object Button1: TButton
     Left = 536

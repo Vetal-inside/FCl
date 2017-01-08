@@ -149,7 +149,7 @@ this->ServerLog->LogLevel = level;
 
 TLogic::TLogic()
 {
-this->minerVersion = cm91;
+this->minerVersion = cm91z;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
@@ -169,8 +169,9 @@ void TLogic::UpdateSettings(int vers)
 {
 this->minerVersion = (Version)vers;
 switch (this->minerVersion) {
-	case cm91:
-	case cm93:
+	case cm91z:
+	case cm93z:
+	case cm10z:
 		this->Pools->resize(4);
 		this->Pools->operator [](0) = "us1-zcash.flypool.org";//Normal 3333		SSL 3443
 		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//Normal 3333		SSL 3443
@@ -184,10 +185,11 @@ switch (this->minerVersion) {
 void TLogic::SetServerLogic(TServer* Server)
 {
 switch (this->minerVersion) {
-	case cm91:
+	case cm91z:
 		Server->SslEnable = false;
 		break;
-	case cm93:
+	case cm93z:
+	case cm10z:
 		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
 		Server->SslContext->SslCAFile = "CA.pem";
 		Server->SslContext->SslCertFile = "FCl.pem";
