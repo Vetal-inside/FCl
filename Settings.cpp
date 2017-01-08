@@ -57,6 +57,14 @@ if (GetAdaptersInfo(pAdapterInfo, &ulOutBufLen) != NO_ERROR) {
 			NetworkConfigs->operator [](j-1).AdapterDescription = pAdapter->Description;
 			NetworkConfigs->operator [](j-1).ipAddress = pAdapter->IpAddressList.IpAddress.String;//!!!!!LISST!!!!!
 			NetworkConfigs->operator [](j-1).Mask = pAdapter->IpAddressList.IpMask.String;//!!!!!LISST!!!!!
+			while (pAdapter->IpAddressList.Next) {
+				pAdapter->IpAddressList = *pAdapter->IpAddressList.Next;
+				if (pAdapter->IpAddressList.IpAddress.String[0] != '8') {
+					NetworkConfigs->operator [](j-1).ipAddress = pAdapter->IpAddressList.IpAddress.String;//!!!!!LISST!!!!!
+					NetworkConfigs->operator [](j-1).Mask = pAdapter->IpAddressList.IpMask.String;//!!!!!LISST!!!!!
+					break;
+					};
+				};
 			NetworkConfigs->operator [](j-1).Gateway = pAdapter->GatewayList.IpAddress.String;//!!!!!LISST!!!!!
 			pAdapter = pAdapter->Next;
 			};
