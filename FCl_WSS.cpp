@@ -1,5 +1,4 @@
 #include "FCl_WSS.h"
-#include "Unit2.h"
 
 inline __fastcall TClient::~TClient(void)
 {
@@ -27,7 +26,6 @@ this->RemotePort = RemotePort;
 this->RemoteIP = RemoteIP;
 this->RemoteAddress = RemoteAddress;
 this->OurLogin = OurLogin;
-this->logging = logging;
 this->OnBgException = this->BgException;
 this->OnClientConnect = this->WSocketServerClientConnect;
 }
@@ -54,17 +52,17 @@ Client->LineEnd = "\r\n";
 void __fastcall TServer::RemoteSessionConnected(TObject *Sender, WORD Error)
 {
 if (Error != 0) {exit(Error);};
-if (this->logging) {
+if (this->ServerLogic->LogLevel>0) {
 	this->ServerLog->Header->operator =("Connection Opened");
 	this->ServerLog->Add("");
 	}
 if (((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd != "") {
-   	if (this->logging) {
+	if (this->ServerLogic->LogLevel>0) {
 		this->ServerLog->Header->operator =("Rcvd from miner");
 		this->ServerLog->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd = ExchangeString(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
-	if (this->logging) {
+	if (this->ServerLogic->LogLevel>0) {
 		this->ServerLog->Header->operator =("Sent to pool");
 		this->ServerLog->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
@@ -79,14 +77,14 @@ UnicodeString FromRemote;
 if (Error != 0) {exit(Error);};
 FromRemote = ((TClient*)(((TWSocket*)Sender)))->ReceiveStr();
 if (FromRemote != "") {
-	if (this->logging) {
+	if (this->ServerLogic->LogLevel>0) {
 		this->ServerLog->Header->operator =("From pool");
 		this->ServerLog->Add(FromRemote);
 		}
 	if (((TClient*)(((TWSocket*)Sender)->Owner))->State == wsConnected) {
 		((TClient*)(((TWSocket*)Sender)->Owner))->SendStr(FromRemote);
 		} else {
-			if (this->logging) {
+			if (this->ServerLogic->LogLevel>0) {
 				this->ServerLog->Header->operator =("Error: Local has closed");
 				this->ServerLog->Add("");
 				}
@@ -119,12 +117,12 @@ void __fastcall TServer::ClientDataAvailable(TObject *Sender, WORD Error)
 if (Error != 0) {exit(Error);};
 ((TClient*)Sender)->Rcvd = ((TClient*)Sender)->Rcvd + ((TClient*)Sender)->ReceiveStr();
 if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sender)->Rcvd != "")) {
-   	if (this->logging) {
+	if (this->ServerLogic->LogLevel>0) {
 		this->ServerLog->Header->operator =("Rcvd from miner");
 		this->ServerLog->Add(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->Rcvd = ExchangeString(((TClient*)Sender)->Rcvd);
-	if (this->logging) {
+	if (this->ServerLogic->LogLevel>0) {
 		this->ServerLog->Header->operator =("Sent to pool");
 		this->ServerLog->Add(((TClient*)Sender)->Rcvd);
 		}
@@ -143,12 +141,18 @@ void __fastcall TServer::BgException(TObject *Sender, Exception *E, bool &CanClo
 CanClose = true;
 }
 
+void __fastcall TServer::SetLogLevel(short level)
+{
+this->ServerLogic->LogLevel = level;
+this->ServerLog->LogLevel = level;
+}
+
 TLogic::TLogic()
 {
 this->minerVersion = cm91;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
-this->logging = true;
+this->LogLevel = 1;
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -157,7 +161,7 @@ TLogic::TLogic(int vers)
 this->minerVersion = (Version)vers;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
-this->logging = true;
+this->LogLevel = 1;
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -179,7 +183,6 @@ switch (this->minerVersion) {
 
 void TLogic::SetServerLogic(TServer* Server)
 {
-Server->logging = this->logging;
 switch (this->minerVersion) {
 	case cm91:
 		Server->SslEnable = false;

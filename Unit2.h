@@ -8,6 +8,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
+
 //---------------------------------------------------------------------------
 class TForm2 : public TForm
 {
@@ -25,6 +26,8 @@ public:
 UnicodeString* Header;
 UnicodeString* Body;
 TRichEdit* Output;
+short LogLevel;
+
 TLog(TRichEdit*);
 void Add(UnicodeString ToLog);
 void RemoveLowChar();

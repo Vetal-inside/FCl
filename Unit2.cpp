@@ -28,6 +28,7 @@ TLog::TLog(TRichEdit* RE)
 this->Header = new UnicodeString;
 this->Body = new UnicodeString;
 this->Output = RE;
+this->LogLevel = 1;
 }
 
 void TLog::Add(UnicodeString ToLog)
@@ -55,7 +56,7 @@ __try {
 	for (i = 0; i < (int)ToLogArr.size(); i++) {//and show each of them
 		flag=false;
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(ToLogArr.operator [](i)),0);
-		if ((json_root)&&(json_root->Get("id"))) {
+		if (((json_root)&&(json_root->Get("id")))&&(this->LogLevel < 2)) {//if loglevel == 2, that we show full packet data
 			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")) {
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;

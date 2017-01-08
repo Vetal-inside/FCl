@@ -33,7 +33,7 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
-	Logic->logging = Form1->CheckBox1->Checked;
+	Server->SetLogLevel(Form1->CheckBox1->Checked);
 	Logic->SetServerLogic(Server);
 	Server->Listen();
 	LocalPort->Enabled = false;

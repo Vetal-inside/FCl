@@ -26,7 +26,6 @@ UnicodeString RemotePort;
 UnicodeString RemoteIP;
 UnicodeString RemoteAddress;
 UnicodeString OurLogin;
-bool logging;
 TLog* ServerLog;
 TLogic* ServerLogic;
 inline __fastcall virtual TServer(System::Classes::TComponent* AOwner) : TSslWSocketServer(AOwner) { }
@@ -38,6 +37,7 @@ void __fastcall ClientDataAvailable(TObject *Sender, WORD Error);
 void __fastcall RemoteSessionClosed(TObject *Sender, WORD Error);
 void __fastcall BgException(TObject *Sender, Exception *E, bool &CanClose);
 UnicodeString __fastcall ExchangeString(UnicodeString si);
+void __fastcall SetLogLevel(short);
 inline __fastcall virtual ~TServer(void) { }
 };
 
@@ -47,7 +47,7 @@ class TLogic
 public:
 Version minerVersion;
 std::vector<UnicodeString>* Pools;
-bool logging;//NAU
+short LogLevel;//NAU//0 - not, 1 - short, 2 - full
 
 TLogic();
 TLogic(int);
