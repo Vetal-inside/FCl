@@ -99,6 +99,24 @@ UnicodeString Out="";;
 TJSONObject *json_root;
 TJSONArray *json_array;
 TJSONArray *json_arr;
+if (this->ServerLogic->minerVersion == cm74et) {
+	Out.operator =(In);
+	Out = StringReplace(Out, "\"eth-eu.dwarfpool.com\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out, "\"us1.ethpool.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out, "\"us1.ethermine.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+
+	Out = StringReplace(Out, "\""+this->LocalPort+"\"", "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+
+	Out = StringReplace(Out,"\"0x3509F7bd9557F8a9b793759b3E3bfA2Cd505ae31\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0xdE088812A9c5005b0dC8447B37193c9e8b67a1fF\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0xe19fFB70E148A76d26698036A9fFD22057967D1b\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0x7Fb21ac4Cd75d9De3E1c5D11D87bB904c01880fc\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0x34FAAa028162C4d4E92DB6abfA236A8E90fF2FC3\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0xc6F31A79526c641de4E432CB22a88BB577A67eaC\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0xB9cF2dA90Bdff1BC014720Cc84F5Ab99d7974EbA\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	Out = StringReplace(Out,"\"0xc1c427cD8E6B7Ee3b5F30c2e1D3f3c5536EC16f5\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+	return Out;
+	};
 int i,j=1;//split complex JSON string into simple
 std::vector<UnicodeString> InArr;
 InArr.resize(0);
@@ -191,6 +209,8 @@ this->minerVersion = cm91z;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
+this->Methods = new std::vector<UnicodeString>;
+this->Methods->resize(0);
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -200,6 +220,8 @@ this->minerVersion = (Version)vers;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
+this->Methods = new std::vector<UnicodeString>;
+this->Methods->resize(0);
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -215,6 +237,28 @@ switch (this->minerVersion) {
 		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//Normal 3333		SSL 3443
 		this->Pools->operator [](2) = "zec-eu1.nanopool.org";//	Normal 6666     SSL 6633
 		this->Pools->operator [](3) = "zec.suprnova.cc";//		Normal 2142		SSL 2242
+		this->Methods->resize(7);
+		this->Methods->operator [](0) = "\"mining.subscribe\"";				//id=1
+		this->Methods->operator [](1) = "\"mining.authorize\"";				//id=2
+		this->Methods->operator [](2) = "didnt_seen";		  				//id=3
+		this->Methods->operator [](3) = "\"mining.submit\"";				//id=4
+		this->Methods->operator [](4) = "\"mining.extranonce.subscribe\"";	//id=5
+		this->Methods->operator [](5) = "didnt_seen";		 				//id=6
+		this->Methods->operator [](6) = "\"mining.set_target\"";			//id=null
+		break;
+	case cm74et:
+		this->Pools->resize(3);
+		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";//	Normal 8008
+		this->Pools->operator [](1) = "us1.ethpool.org";//		Normal 3333
+		this->Pools->operator [](2) = "us1.ethermine.org";//	Normal 4444
+		/*this->Methods->resize(7);
+		this->Methods->operator [](0) = "didnt_seen";		  				//id=1
+		this->Methods->operator [](1) = "\"eth_submitLogin\"";				//id=2
+		this->Methods->operator [](2) = "\"eth_getWork\"";					//id=3
+		this->Methods->operator [](3) = "\"eth_submitWork\"";				//id=4
+		this->Methods->operator [](4) = "didnt_seen";		  				//id=5
+		this->Methods->operator [](5) = "\"eth_submitHashrate\"";			//id=6
+		this->Methods->operator [](6) = "didnt_seen";			  			//id=null*/
 		break;
 	}
 
@@ -233,6 +277,9 @@ switch (this->minerVersion) {
 		Server->SslContext->SslCertFile = "FCl.pem";
 		Server->SslContext->SslPrivKeyFile = "FCl.key";
 		Server->SslEnable = true;
+		break;
+	case cm74et:
+		Server->SslEnable = false;
 		break;
 	}
 }

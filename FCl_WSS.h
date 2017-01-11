@@ -42,18 +42,20 @@ void __fastcall SetLogLevel(short);
 inline __fastcall virtual ~TServer(void) { }
 };
 
-enum Version {cm91z = 0, cm93z, cm10z};
+enum Version {cm91z = 0, cm93z, cm10z, cm74et};
 class TLogic
 {
 public:
 Version minerVersion;
 std::vector<UnicodeString>* Pools;
 short LogLevel;//NAU//0 - not, 1 - short, 2 - full
+std::vector<UnicodeString>* Methods;
 
 TLogic();
 TLogic(int);
 void UpdateSettings(int);
 void SetServerLogic(TServer*);
+
 ~TLogic();
 };
 #endif

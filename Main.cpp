@@ -79,10 +79,25 @@ Form3->FillNetworkData();
 switch (Form1->ComboBox1->ItemIndex) {
 	case 0 :
 		Form1->LocalPort->Text = "3333";
+		Form1->RemoteAddr->Text = "equihash.eu.nicehash.com";
+		Form1->RemotePort->Text = "3357";
+		Form1->RealIP->Text = "5.153.50.217";
+		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	case 1 :
 	case 2 :
 		Form1->LocalPort->Text = "3443";
+		Form1->RemoteAddr->Text = "equihash.eu.nicehash.com";
+		Form1->RemotePort->Text = "3357";
+		Form1->RealIP->Text = "5.153.50.217";
+		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		break;
+	case 3 :
+		Form1->LocalPort->Text = "8008";
+		Form1->RemoteAddr->Text = "eth-eu.dwarfpool.com";
+		Form1->RemotePort->Text = "8008";
+		Form1->RealIP->Text = "87.98.182.61";
+		Form1->edWorker->Text = "0x1f31f42000054ab471a286ac75567860f5732114";
 		break;
 	;
 }

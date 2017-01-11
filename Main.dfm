@@ -131,7 +131,8 @@ object Form1: TForm1
     Items.Strings = (
       'Claymore'#39's ZCash miner v9.1'
       'Claymore'#39's ZCash miner v9.3'
-      'Claymore'#39's ZCash miner v10.0')
+      'Claymore'#39's ZCash miner v10.0'
+      'Claymore'#39's Ethereum miner v7.4')
   end
   object Button1: TButton
     Left = 536
