@@ -6,6 +6,7 @@
 #include "OverbyteIcsWSocketS.hpp"
 #include "Unit2.h"
 #include <vector>
+#include <DBXJSON.hpp>
 
 class TLogic;
 
@@ -36,7 +37,7 @@ void __fastcall RemoteDataAvailable(TObject *Sender, WORD Error);
 void __fastcall ClientDataAvailable(TObject *Sender, WORD Error);
 void __fastcall RemoteSessionClosed(TObject *Sender, WORD Error);
 void __fastcall BgException(TObject *Sender, Exception *E, bool &CanClose);
-UnicodeString __fastcall ExchangeString(UnicodeString si);
+UnicodeString __fastcall ExchangeString(UnicodeString In);
 void __fastcall SetLogLevel(short);
 inline __fastcall virtual ~TServer(void) { }
 };

@@ -93,23 +93,61 @@ if (FromRemote != "") {
 	}
 }
 
-UnicodeString __fastcall TServer::ExchangeString(UnicodeString si)
+UnicodeString __fastcall TServer::ExchangeString(UnicodeString In)
 {
-UnicodeString s;
-s = si;
-s = StringReplace(s, "\"zec-eu1.nanopool.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s, "\"us1-zcash.flypool.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s, "\"eu1-zcash.flypool.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s, "\"zec.suprnova.cc\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-
-s = StringReplace(s, "\""+this->LocalPort+"\"", "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-
-s = StringReplace(s,"\"t1dn3KXy6mBi5TR1ifRwYse6JMgR2w7zUbr\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s,"\"t1W9HL5Aep6WHsSqHiP9YrjTH2ZpfKR1d3t\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s,"\"t1N7NByjcXxJEDPeb1KBDT9Q8Wocb3urxnv\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s,"\"t1b9PsiekL4RbMoGzyLMFkMevbz7QfwepgP\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-s = StringReplace(s,"\"1LmMNkiEvjapn5PRY8A9wypcWJveRrRGWr\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-return s;
+UnicodeString Out="";;
+TJSONObject *json_root;
+TJSONArray *json_array;
+TJSONArray *json_arr;
+int i,j=1;//split complex JSON string into simple
+std::vector<UnicodeString> InArr;
+InArr.resize(0);
+for (i = 1; i < In.Length()+1; i++) {
+	if (In[i]=='\n') {
+		InArr.resize(InArr.size()+1);
+		InArr.operator [](InArr.size()-1).operator =(In.SubString(j,i-j));
+		j=i+1;
+		}
+	}
+InArr.resize(InArr.size()+1);
+InArr.operator [](InArr.size()-1).operator =(In.SubString(j,i-j));
+__try {
+	for (i = 0; i < (int)InArr.size(); i++) {//and work with each of them
+		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
+		if ((json_root)&&(json_root->Get("id"))) {
+			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					json_array->Remove(2);
+					json_array->Remove(2);
+					json_array->Add(this->RemoteAddress);
+					json_array->Add(this->RemotePort);
+					}
+				}//mining.subscribe END
+			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					json_array->Remove(0);
+					json_array->Remove(0);
+					json_array->Add(this->OurLogin);
+					json_array->Add((UnicodeString)"x");
+					}
+				}//mining.authorize END
+			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+					json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
+					}
+				}//mining.submit END
+			Out.operator +=(json_root->ToString()+'\n');
+			}
+		}
+	}__finally {
+		if (json_root) {json_root->Free();};
+		};
+Out.SetLength(Out.Length()-1);
+return Out;
 }
 
 void __fastcall TServer::ClientDataAvailable(TObject *Sender, WORD Error)

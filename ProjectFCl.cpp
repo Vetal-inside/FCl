@@ -3,10 +3,6 @@
 #pragma hdrstop
 #include <tchar.h>
 //---------------------------------------------------------------------------
-
-
-
-
 USEFORM("Unit2.cpp", Form2);
 USEFORM("Main.cpp", Form1);
 USEFORM("Settings.cpp", Form3);

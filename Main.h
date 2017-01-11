@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-
 #ifndef MainH
 #define MainH
 //---------------------------------------------------------------------------
@@ -10,7 +9,6 @@
 #include "OverbyteIcsWndControl.hpp"
 #include "OverbyteIcsWSocket.hpp"
 #include "OverbyteIcsWSocketS.hpp"
-#include <Vcl.ComCtrls.hpp>
 //---------------------------------------------------------------------------
 class TForm1 : public TForm
 {

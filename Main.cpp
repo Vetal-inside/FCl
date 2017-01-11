@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-
 #include <vcl.h>
 #pragma hdrstop
 
@@ -7,9 +6,7 @@
 #include "Unit2.cpp"
 #include "FCl_WSS.cpp"
 #include "Settings.cpp"
-
 //---------------------------------------------------------------------------
-
 #pragma link "OverbyteIcsWndControl"
 #pragma link "OverbyteIcsWSocket"
 #pragma link "OverbyteIcsWSocketS"
@@ -33,7 +30,7 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
-	Server->SetLogLevel(Form1->CheckBox1->Checked);
+	Server->SetLogLevel(2);//Form1->CheckBox1->Checked);
 	Logic->SetServerLogic(Server);
 	Server->Listen();
 	LocalPort->Enabled = false;
