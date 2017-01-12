@@ -95,10 +95,9 @@ if (FromRemote != "") {
 
 UnicodeString __fastcall TServer::ExchangeString(UnicodeString In)
 {
-UnicodeString Out="";;
+UnicodeString Out="";
 TJSONObject *json_root;
 TJSONArray *json_array;
-TJSONArray *json_arr;
 int i,j=1;//split complex JSON string into simple
 std::vector<UnicodeString> InArr;
 InArr.resize(0);
@@ -118,35 +117,31 @@ __try {
 			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					json_array->Remove(2);
-					json_array->Remove(2);
-					json_array->Add(this->RemoteAddress);
-					json_array->Add(this->RemotePort);
+					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(2)->ToString(), "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 					}
 				}//mining.subscribe END
 			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					json_array->Remove(0);
-					json_array->Remove(0);
-					json_array->Add(this->OurLogin);
-					json_array->Add((UnicodeString)"x");
+					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 					}
 				}//mining.authorize END
 			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-					json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 					}
 				}//mining.submit END
-			Out.operator +=(json_root->ToString()+'\n');
+			Out.operator +=(InArr.operator [](i));
+			Out.SetLength(Out.Length()+1);
+			Out.operator [](Out.Length()) = '\n';
 			}
 		}
 	}__finally {
 		if (json_root) {json_root->Free();};
 		};
-Out.SetLength(Out.Length()-1);
 return Out;
 }
 
