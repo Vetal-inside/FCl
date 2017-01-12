@@ -29,6 +29,8 @@ this->Header = new UnicodeString;
 this->Body = new UnicodeString;
 this->Output = RE;
 this->LogLevel = 1;
+this->LogVersion = 0;
+this->Methods = '\0';
 }
 
 void TLog::Add(UnicodeString ToLog)
@@ -69,8 +71,8 @@ __try {
 					flag=true;
 					}
 				}//mining.subscribe END
-			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")) {
+			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize||eth_submitLogin BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == this->Methods->operator [](1))) {
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 					this->Body->operator =("Autorizing : "+json_array->Get(0)->ToString()+":"+json_array->Get(1)->ToString());
 					flag=true;
@@ -79,25 +81,42 @@ __try {
 					this->Body->operator =("Succesfully authorized!");
 					flag=true;
 					}
-				}//mining.authorize END
-			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")) {
-					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					this->Body->operator =("Sending share from : "+json_array->Get(0)->ToString());
+				}//mining.authorize||eth_submitLogin END
+			if (json_root->Get("id")->JsonValue->ToString() == "3") {//eth_getWork BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"eth_getWork\"")) {
+					this->Body->operator =("Getting new work...");
 					flag=true;
+					}
+				if (json_root->Get("result")) {
+					json_array = (TJSONArray*) json_root->Get("result")->JsonValue;
+					this->Body->operator =("Pools send new work: " + json_array->Get(0)->ToString()+", "+json_array->Get(1)->ToString()+", "+json_array->Get(2)->ToString());
+					flag=true;
+					}
+				}//eth_getWork END
+			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit||eth_submitWork BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == this->Methods->operator [](3))) {
+					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+					if (this->LogVersion < 2) {//cm**z
+						this->Body->operator =("Sending share from : "+json_array->Get(0)->ToString());
+						flag=true;
+						}
+					if (this->LogVersion == 2) {//cm74et
+						this->Body->operator =("Sending share");
+						flag=true;
+						}
 					}
 				if (json_root->Get("result")) {
 					if (json_root->Get("result")->JsonValue->ToString()=="true") {
 						this->Body->operator =("Share accepted");
 						flag=true;
 						}
-					if (json_root->Get("result")->JsonValue->ToString()=="null") {
+					if ((json_root->Get("result")->JsonValue->ToString()=="null")&&(this->LogVersion < 2)) {//without cm74et
 						json_array = (TJSONArray*) json_root->Get("error")->JsonValue;
 						this->Body->operator =("Share rejected. Reason: "+json_array->Get(1)->ToString()+", error id "+json_array->Get(0)->ToString());
 						flag=true;
 						}
 					}
-				}//mining.submit END
+				}//mining.submit||eth_submitWork END
 			if (json_root->Get("id")->JsonValue->ToString() == "5") {//mining.extranonce.subscribe BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.extranonce.subscribe\"")) {
 					this->Body->operator =("Requesting extranonce.subscribe...");
@@ -110,6 +129,18 @@ __try {
 						}
 					}
 				}//mining.extranonce.subscribe END
+			if (json_root->Get("id")->JsonValue->ToString() == "6") {//eth_submitHashrate BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"eth_submitHashrate\"")) {
+					this->Body->operator =("Sending hashrate...");
+					flag=true;
+					}
+				if (json_root->Get("result")) {
+					if (json_root->Get("result")->JsonValue->ToString()=="true") {
+						this->Body->operator =("Hashrate accepted");
+						flag=true;
+						}
+					}
+				}//eth_submitHashrate END
 			if (json_root->Get("id")->JsonValue->ToString() == "null") {//mining.set_target/notify/set_extranonce BEGIN
 				if (json_root->Get("method")) {
 					if (json_root->Get("method")->JsonValue->ToString() == "\"mining.set_target\""){

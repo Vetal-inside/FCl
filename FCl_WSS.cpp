@@ -242,6 +242,8 @@ switch (this->minerVersion) {
 
 void TLogic::SetServerLogic(TServer* Server)
 {
+Server->ServerLog->LogVersion = (short)Server->ServerLogic->minerVersion;
+Server->ServerLog->Methods = Server->ServerLogic->Methods;
 switch (this->minerVersion) {
 	case cm91z:
 		Server->SslEnable = false;

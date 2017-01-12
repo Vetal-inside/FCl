@@ -8,6 +8,7 @@
 #include <Vcl.StdCtrls.hpp>
 #include <Vcl.Forms.hpp>
 #include <Vcl.ComCtrls.hpp>
+#include <vector>
 
 //---------------------------------------------------------------------------
 class TForm2 : public TForm
@@ -27,6 +28,8 @@ UnicodeString* Header;
 UnicodeString* Body;
 TRichEdit* Output;
 short LogLevel;
+short LogVersion;
+std::vector<UnicodeString>* Methods;
 
 TLog(TRichEdit*);
 void Add(UnicodeString ToLog);
