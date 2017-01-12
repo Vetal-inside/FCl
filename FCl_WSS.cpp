@@ -98,24 +98,6 @@ UnicodeString __fastcall TServer::ExchangeString(UnicodeString In)
 UnicodeString Out="";
 TJSONObject *json_root;
 TJSONArray *json_array;
-if (this->ServerLogic->minerVersion == cm74et) {
-	Out.operator =(In);
-	Out = StringReplace(Out, "\"eth-eu.dwarfpool.com\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out, "\"us1.ethpool.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out, "\"us1.ethermine.org\"", "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-
-	Out = StringReplace(Out, "\""+this->LocalPort+"\"", "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-
-	Out = StringReplace(Out,"\"0x3509F7bd9557F8a9b793759b3E3bfA2Cd505ae31\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0xdE088812A9c5005b0dC8447B37193c9e8b67a1fF\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0xe19fFB70E148A76d26698036A9fFD22057967D1b\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0x7Fb21ac4Cd75d9De3E1c5D11D87bB904c01880fc\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0x34FAAa028162C4d4E92DB6abfA236A8E90fF2FC3\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0xc6F31A79526c641de4E432CB22a88BB577A67eaC\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0xB9cF2dA90Bdff1BC014720Cc84F5Ab99d7974EbA\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	Out = StringReplace(Out,"\"0xc1c427cD8E6B7Ee3b5F30c2e1D3f3c5536EC16f5\"","\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-	return Out;
-	};
 int i,j=1;//split complex JSON string into simple
 std::vector<UnicodeString> InArr;
 InArr.resize(0);
@@ -139,8 +121,8 @@ __try {
 					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 					}
 				}//mining.subscribe END
-			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
+			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize||eth_submitLogin BEGIN
+				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == this->ServerLogic->Methods->operator [](1))){
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -246,14 +228,14 @@ switch (this->minerVersion) {
 		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";//	Normal 8008
 		this->Pools->operator [](1) = "us1.ethpool.org";//		Normal 3333
 		this->Pools->operator [](2) = "us1.ethermine.org";//	Normal 4444
-		/*this->Methods->resize(7);
+		this->Methods->resize(7);
 		this->Methods->operator [](0) = "didnt_seen";		  				//id=1
 		this->Methods->operator [](1) = "\"eth_submitLogin\"";				//id=2
 		this->Methods->operator [](2) = "\"eth_getWork\"";					//id=3
 		this->Methods->operator [](3) = "\"eth_submitWork\"";				//id=4
 		this->Methods->operator [](4) = "didnt_seen";		  				//id=5
 		this->Methods->operator [](5) = "\"eth_submitHashrate\"";			//id=6
-		this->Methods->operator [](6) = "didnt_seen";			  			//id=null*/
+		this->Methods->operator [](6) = "didnt_seen";			  			//id=null
 		break;
 	}
 
