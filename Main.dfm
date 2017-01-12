@@ -4,7 +4,7 @@ object Form1: TForm1
   BorderStyle = bsSingle
   Caption = 'FCl project: Windows MITM proxy for proprietary miners'
   ClientHeight = 108
-  ClientWidth = 721
+  ClientWidth = 773
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -121,7 +121,7 @@ object Form1: TForm1
   object ComboBox1: TComboBox
     Left = 536
     Top = 24
-    Width = 169
+    Width = 217
     Height = 21
     Style = csDropDownList
     ItemIndex = 0
@@ -130,8 +130,7 @@ object Form1: TForm1
     OnChange = ComboBox1Change
     Items.Strings = (
       'Claymore'#39's ZCash miner v9.1'
-      'Claymore'#39's ZCash miner v9.3'
-      'Claymore'#39's ZCash miner v10.0'
+      'Claymore'#39's ZCash miner v9.3 and newer'
       'Claymore'#39's Ethereum miner v7.4')
   end
   object Button1: TButton
