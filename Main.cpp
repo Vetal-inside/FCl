@@ -1,5 +1,8 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
+#include <fstream>
+#include <stdio.h>
+#include <io.h>
 #pragma hdrstop
 
 #include "Main.h"
@@ -30,7 +33,7 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
-	Server->SetLogLevel(Form1->CheckBox1->Checked);
+	Server->SetLogLevel(Form1->ComboBox2->ItemIndex);
 	Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
 	Logic->SetServerLogic(Server);
 	Server->Listen();
@@ -40,7 +43,7 @@ if (ListenBtn->Tag == 0) {
 	RealIP->Enabled = false;
 	edWorker->Enabled = false;
 	ComboBox1->Enabled = false;
-	CheckBox1->Enabled = false;
+	ComboBox2->Enabled = false;
 	Button1->Enabled = false;
 	Form3->Hide();
 	ListenBtn->Caption = "Cancel";
@@ -56,7 +59,7 @@ if (ListenBtn->Tag == 0) {
 		Form1->RealIP->Enabled = true;
 		Form1->edWorker->Enabled = true;
 		Form1->ComboBox1->Enabled = true;
-		Form1->CheckBox1->Enabled = true;
+		Form1->ComboBox2->Enabled = true;
 		Button1->Enabled = true;
 		Form1->ListenBtn->Caption = "Listen";
 		Form1->ListenBtn->Tag = 0;
@@ -77,6 +80,10 @@ Form3->LoadNetworkSettings();
 Form3->FillAdaptersData();
 Form3->FillHostsData();
 Form3->FillNetworkData();
+if (this->FromFile) {
+	this->FromFile = false;
+	return;
+	}
 switch (Form1->ComboBox1->ItemIndex) {
 	case 0 :
 		Form1->LocalPort->Text = "3333";
@@ -105,6 +112,7 @@ switch (Form1->ComboBox1->ItemIndex) {
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
+this->FromFile = false;
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
 NetworkConfigs = new std::vector<TNetworkConfig>(0);
@@ -114,11 +122,80 @@ Server->SslContext = SslContext;
 Server->ServerLog = Log;
 Server->ServerLogic = Logic;
 Logic->SetServerLogic(Server);
+this->LoadFromFile();
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::Button1Click(TObject *Sender)
 {
 Form3->Show();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm1::LoadFromFile()
+{
+bool flag = false;
+char* buf = "";
+UnicodeString bufstr;
+ifstream fin("config.txt");
+while (fin.is_open()&&!fin.eof()){
+	fin >> (char*)buf;
+	bufstr = buf;
+	if (bufstr == "-localport") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->LocalPort->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-domainaddress") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->RemoteAddr->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-ipaddress") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->RealIP->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-remoteport") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->RemotePort->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-worker") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->edWorker->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-loglevel") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->ComboBox2->ItemIndex = bufstr.ToInt();
+		continue;
+		}
+	if (bufstr == "-minerversion") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->ComboBox1->ItemIndex = bufstr.ToInt();
+		this->FromFile = true;
+		Form1->ComboBox1Change(Form1);
+		continue;
+		}
+	if (bufstr == "-autostart") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if (bufstr == "1") {
+			flag = true;
+			}
+		continue;
+		}
+	}
+fin.close();
+if (flag) {
+    this->ListenBtnClick(Form1);
+	}
 }
 //---------------------------------------------------------------------------

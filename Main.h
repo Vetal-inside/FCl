@@ -18,7 +18,6 @@ __published:	// IDE-managed Components
 	TLabel *Label3;
 	TEdit *RemotePort;
 	TButton *ListenBtn;
-	TCheckBox *CheckBox1;
 	TEdit *LocalPort;
 	TEdit *edWorker;
 	TEdit *RemoteAddr;
@@ -28,15 +27,19 @@ __published:	// IDE-managed Components
 	TComboBox *ComboBox1;
 	TLabel *Label6;
 	TButton *Button1;
+	TComboBox *ComboBox2;
+	TLabel *Label7;
 	void __fastcall ListenBtnClick(TObject *Sender);
 	void __fastcall FormCanResize(TObject *Sender, int &NewWidth, int &NewHeight, bool &Resize);
 	void __fastcall ComboBox1Change(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
 	void __fastcall Button1Click(TObject *Sender);
+	void __fastcall LoadFromFile();
 
 private:
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
+	bool FromFile;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;

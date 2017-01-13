@@ -59,6 +59,13 @@ object Form1: TForm1
     Height = 13
     Caption = 'Miner version'
   end
+  object Label7: TLabel
+    Left = 447
+    Top = 57
+    Width = 17
+    Height = 13
+    Caption = 'Log'
+  end
   object RemotePort: TEdit
     Left = 447
     Top = 24
@@ -76,30 +83,20 @@ object Form1: TForm1
     TabOrder = 1
     OnClick = ListenBtnClick
   end
-  object CheckBox1: TCheckBox
-    Left = 447
-    Top = 78
-    Width = 75
-    Height = 17
-    Caption = 'Logs'
-    Checked = True
-    State = cbChecked
-    TabOrder = 2
-  end
   object LocalPort: TEdit
     Left = 16
     Top = 24
     Width = 75
     Height = 21
-    TabOrder = 3
+    TabOrder = 2
     Text = '3333'
   end
   object edWorker: TEdit
     Left = 120
     Top = 76
-    Width = 298
+    Width = 313
     Height = 21
-    TabOrder = 4
+    TabOrder = 3
     Text = '12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA'
   end
   object RemoteAddr: TEdit
@@ -107,7 +104,7 @@ object Form1: TForm1
     Top = 24
     Width = 217
     Height = 21
-    TabOrder = 5
+    TabOrder = 4
     Text = 'equihash.eu.nicehash.com'
   end
   object RealIP: TEdit
@@ -115,7 +112,7 @@ object Form1: TForm1
     Top = 24
     Width = 81
     Height = 21
-    TabOrder = 6
+    TabOrder = 5
     Text = '5.153.50.217'
   end
   object ComboBox1: TComboBox
@@ -125,7 +122,7 @@ object Form1: TForm1
     Height = 21
     Style = csDropDownList
     ItemIndex = 0
-    TabOrder = 7
+    TabOrder = 6
     Text = 'Claymore'#39's ZCash miner v9.1'
     OnChange = ComboBox1Change
     Items.Strings = (
@@ -134,12 +131,27 @@ object Form1: TForm1
       'Claymore'#39's Ethereum miner v7.4')
   end
   object Button1: TButton
-    Left = 536
-    Top = 76
+    Left = 690
+    Top = 79
     Width = 75
     Height = 21
     Caption = 'Settings'
-    TabOrder = 8
+    TabOrder = 7
     OnClick = Button1Click
+  end
+  object ComboBox2: TComboBox
+    Left = 447
+    Top = 76
+    Width = 75
+    Height = 21
+    Style = csDropDownList
+    ItemIndex = 1
+    TabOrder = 8
+    Text = 'Short log'
+    OnChange = ComboBox1Change
+    Items.Strings = (
+      'Without log'
+      'Short log'
+      'Full log')
   end
 end
