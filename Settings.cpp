@@ -171,8 +171,9 @@ void __fastcall TForm3::FillHostsData()
 {
 this->Memo1->Lines->Clear();
 int i;
+int rig_number = this->ComboBox1->ItemIndex + 1;
 for (i = 0; i < (int)Logic->Pools->size(); i++) {
-	this->Memo1->Lines->Add("8.8.8.10"+IntToStr(i)+"  "+Logic->Pools->operator [](i));
+	this->Memo1->Lines->Add("8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+"  "+Logic->Pools->operator [](i));
 	};
 }
 
@@ -180,6 +181,7 @@ void __fastcall TForm3::FillNetworkData()
 {
 this->Memo2->Lines->Clear();
 int i = this->ComboBox4->ItemIndex;
+int rig_number = this->ComboBox1->ItemIndex + 1;
 UnicodeString name,mask,gateway;
 name = NetworkConfigs->operator [](i).FriendlyName;
 mask = NetworkConfigs->operator [](i).Mask;
@@ -190,7 +192,7 @@ if (NetworkConfigs->operator [](0).DNS.size()==2) {
 	}
 this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address="+NetworkConfigs->operator [](i).ipAddress+" mask="+mask+" gateway="+gateway);
 for (i = 0; i < (int)Logic->Pools->size(); i++) {
-	this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8.8.10"+IntToStr(i)+" mask="+mask+" gateway="+gateway);
+	this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+" mask=255.255.255.255 gateway="+gateway);
 	}
 this->Memo2->Lines->Add("pause");
 }
@@ -212,6 +214,12 @@ TNetworkConfig::~TNetworkConfig()
 }
 void __fastcall TForm3::ComboBox4Change(TObject *Sender)
 {
+this->FillNetworkData();
+}
+//---------------------------------------------------------------------------
+void __fastcall TForm3::ComboBox1Change(TObject *Sender)
+{
+this->FillHostsData();
 this->FillNetworkData();
 }
 //---------------------------------------------------------------------------

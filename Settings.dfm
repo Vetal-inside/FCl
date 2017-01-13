@@ -37,6 +37,13 @@ object Form3: TForm3
     Height = 13
     Caption = 'Run cmd.exe with administrator privileges and execute:'
   end
+  object Label3: TLabel
+    Left = 641
+    Top = 5
+    Width = 26
+    Height = 13
+    Caption = 'Rig #'
+  end
   object ComboBox4: TComboBox
     Left = 216
     Top = 24
@@ -62,5 +69,27 @@ object Form3: TForm3
     Height = 294
     TabOrder = 2
     WordWrap = False
+  end
+  object ComboBox1: TComboBox
+    Left = 641
+    Top = 24
+    Width = 56
+    Height = 21
+    Style = csDropDownList
+    ItemIndex = 0
+    TabOrder = 3
+    Text = '1'
+    OnChange = ComboBox1Change
+    Items.Strings = (
+      '1'
+      '2'
+      '3'
+      '4'
+      '5'
+      '6'
+      '7'
+      '8'
+      '9'
+      '10')
   end
 end

@@ -43,8 +43,11 @@ __published:	// IDE-managed Components
 	TMemo *Memo2;
 	TLabel *Label1;
 	TLabel *Label2;
+	TLabel *Label3;
+	TComboBox *ComboBox1;
 	void __fastcall ComboBox4Change(TObject *Sender);
 	void __fastcall FormShow(TObject *Sender);
+	void __fastcall ComboBox1Change(TObject *Sender);
 
 private:	// User declarations
 public:		// User declarations
