@@ -9,6 +9,8 @@ Software has simple and friendly interface. Just set:
 <li><b>Remote port</b> - target port of remote server</li>
 <li><b>Domain address and IP address</b> - domain name and IP of target server</li>
 <li><b>Replace worker/wallet</b> - your username on pool: usually your wallet or pair login.worker</li>
+<li><b>Miner version</b> - select miner, which you use</li>
+<li><b>Log</b> - select logging level which will be used</li>
 </ul>
 More details on <a href="https://bitcointalk.org/index.php?topic=1734152.0">bitcointalk</a>
 

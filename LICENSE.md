@@ -30,10 +30,10 @@ restrictions:
 
 4. Prohibition to see, watch, learn, analyze, directly or
    indirectly, source/binary/disassembled/anything_else code
-   of this program, if you have in mind to understand how it
-   works in order to add the avoid mechanisms to any miner
-   software.
-   
+   and/or any results of work of this program, if you have
+   in mind to understand how it works in order to add
+   the avoid mechanisms to any miner software.
+
 5. As this code make use of OpenSSL, your rights are restricted
    by OpenSSL license as soon as you use any SSL feature.
    See http://www.openssl.org for details.
