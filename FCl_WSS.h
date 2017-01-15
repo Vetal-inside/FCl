@@ -42,7 +42,7 @@ void __fastcall SetLogLevel(short);
 inline __fastcall virtual ~TServer(void) { }
 };
 
-enum Version {cm91z = 0, cm93z_pl, cm74et};
+enum Version {cm91z = 0, cm93z_pl, cm74et, cm97x};
 class TLogic
 {
 public:

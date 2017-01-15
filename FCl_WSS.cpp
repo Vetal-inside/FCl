@@ -96,7 +96,7 @@ if (FromRemote != "") {
 UnicodeString __fastcall TServer::ExchangeString(UnicodeString In)
 {
 UnicodeString Out="";
-TJSONObject *json_root;
+TJSONObject *json_root, *json_subroot;
 TJSONArray *json_array;
 int i,j=1;//split complex JSON string into simple
 std::vector<UnicodeString> InArr;
@@ -114,13 +114,22 @@ __try {
 	for (i = 0; i < (int)InArr.size(); i++) {//and work with each of them
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
-			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
-					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(2)->ToString(), "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe||login BEGIN
+				if ((this->ServerLogic->minerVersion == cm91z)||(this->ServerLogic->minerVersion == cm93z_pl)) {
+					if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
+						json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(2)->ToString(), "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+						}
 					}
-				}//mining.subscribe END
+				if (this->ServerLogic->minerVersion == cm97x) {
+					if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"login\"")){
+						json_subroot = (TJSONObject*) json_root->Get("params")->JsonValue;
+						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("login")->JsonValue->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("pass")->JsonValue->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+						}
+					}
+				}//mining.subscribe||login END
 			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize||eth_submitLogin BEGIN
 				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == this->ServerLogic->Methods->operator [](1))){
 					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
@@ -209,32 +218,46 @@ switch (this->minerVersion) {
 	case cm91z:
 	case cm93z_pl:
 		this->Pools->resize(4);
-		this->Pools->operator [](0) = "us1-zcash.flypool.org";//Normal 3333		SSL 3443
-		this->Pools->operator [](1) = "eu1-zcash.flypool.org";//Normal 3333		SSL 3443
-		this->Pools->operator [](2) = "zec-eu1.nanopool.org";//	Normal 6666     SSL 6633
-		this->Pools->operator [](3) = "zec.suprnova.cc";//		Normal 2142		SSL 2242
+		this->Pools->operator [](0) = "us1-zcash.flypool.org";							//Normal 3333		SSL 3443
+		this->Pools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
+		this->Pools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
+		this->Pools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
 		this->Methods->resize(7);
-		this->Methods->operator [](0) = "\"mining.subscribe\"";				//id=1
-		this->Methods->operator [](1) = "\"mining.authorize\"";				//id=2
-		this->Methods->operator [](2) = "didnt_seen";		  				//id=3
-		this->Methods->operator [](3) = "\"mining.submit\"";				//id=4
-		this->Methods->operator [](4) = "\"mining.extranonce.subscribe\"";	//id=5
-		this->Methods->operator [](5) = "didnt_seen";		 				//id=6
-		this->Methods->operator [](6) = "\"mining.set_target\"";			//id=null
+		this->Methods->operator [](0) = "\"mining.subscribe\"";							//id=1
+		this->Methods->operator [](1) = "\"mining.authorize\"";							//id=2
+		this->Methods->operator [](2) = "didnt_seen";		  							//id=3
+		this->Methods->operator [](3) = "\"mining.submit\"";							//id=4
+		this->Methods->operator [](4) = "\"mining.extranonce.subscribe\"";				//id=5
+		this->Methods->operator [](5) = "didnt_seen";		 							//id=6
+		this->Methods->operator [](6) = "\"mining.set_target\"";						//id=null
 		break;
 	case cm74et:
 		this->Pools->resize(3);
-		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";//	Normal 8008
-		this->Pools->operator [](1) = "us1.ethpool.org";//		Normal 3333
-		this->Pools->operator [](2) = "us1.ethermine.org";//	Normal 4444
+		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";							//Normal 8008
+		this->Pools->operator [](1) = "us1.ethpool.org";								//Normal 3333
+		this->Pools->operator [](2) = "us1.ethermine.org";								//Normal 4444
 		this->Methods->resize(7);
-		this->Methods->operator [](0) = "didnt_seen";		  				//id=1
-		this->Methods->operator [](1) = "\"eth_submitLogin\"";				//id=2
-		this->Methods->operator [](2) = "\"eth_getWork\"";					//id=3
-		this->Methods->operator [](3) = "\"eth_submitWork\"";				//id=4
-		this->Methods->operator [](4) = "didnt_seen";		  				//id=5
-		this->Methods->operator [](5) = "\"eth_submitHashrate\"";			//id=6
-		this->Methods->operator [](6) = "didnt_seen";			  			//id=null
+		this->Methods->operator [](0) = "didnt_seen";		  							//id=1
+		this->Methods->operator [](1) = "\"eth_submitLogin\"";							//id=2
+		this->Methods->operator [](2) = "\"eth_getWork\"";								//id=3
+		this->Methods->operator [](3) = "\"eth_submitWork\"";							//id=4
+		this->Methods->operator [](4) = "didnt_seen";		  							//id=5
+		this->Methods->operator [](5) = "\"eth_submitHashrate\"";						//id=6
+		this->Methods->operator [](6) = "didnt_seen";			  						//id=null
+		break;
+	case cm97x:
+		this->Pools->resize(3);
+		this->Pools->operator [](0) = "cryptonight.usa.nicehash.com";					//SSL 3355
+		this->Pools->operator [](1) = "xmr.suprnova.cc";								//SSL 5222
+		this->Pools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
+		this->Methods->resize(7);
+		this->Methods->operator [](0) = "didnt_seen";		  							//id=1
+		this->Methods->operator [](1) = "\"login\"";									//id=2
+		this->Methods->operator [](2) = "didnt_seen";									//id=3
+		this->Methods->operator [](3) = "didnt_seen";									//id=4
+		this->Methods->operator [](4) = "\"submit\""; 		  							//id=5
+		this->Methods->operator [](5) = "didnt_seen";									//id=6
+		this->Methods->operator [](6) = "didnt_seen";			  						//id=null
 		break;
 	}
 
@@ -246,17 +269,16 @@ Server->ServerLog->LogVersion = (short)Server->ServerLogic->minerVersion;
 Server->ServerLog->Methods = Server->ServerLogic->Methods;
 switch (this->minerVersion) {
 	case cm91z:
+	case cm74et:
 		Server->SslEnable = false;
 		break;
 	case cm93z_pl:
+	case cm97x:
 		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
 		Server->SslContext->SslCAFile = "CA.pem";
 		Server->SslContext->SslCertFile = "FCl.pem";
 		Server->SslContext->SslPrivKeyFile = "FCl.key";
 		Server->SslEnable = true;
-		break;
-	case cm74et:
-		Server->SslEnable = false;
 		break;
 	}
 }

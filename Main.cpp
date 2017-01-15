@@ -106,6 +106,13 @@ switch (Form1->ComboBox1->ItemIndex) {
 		Form1->RealIP->Text = "87.98.182.61";
 		Form1->edWorker->Text = "0x1f31f42000054ab471a286ac75567860f5732114";
 		break;
+	case 3 :
+		Form1->LocalPort->Text = "3355";
+		Form1->RemoteAddr->Text = "cryptonight.eu.nicehash.com";
+		Form1->RemotePort->Text = "3355";
+		Form1->RealIP->Text = "5.153.50.217";
+		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		break;
 	;
 }
 }
