@@ -284,10 +284,10 @@ Server->ServerLog->Methods = Server->ServerLogic->Methods;
 switch (this->minerVersion) {
 	case cm91z:
 	case cm74et:
+	case cm97x:
 		Server->SslEnable = false;
 		break;
 	case cm93z_pl:
-	case cm97x:
 		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
 		Server->SslContext->SslCAFile = "CA.pem";
 		Server->SslContext->SslCertFile = "FCl.pem";
