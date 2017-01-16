@@ -27,6 +27,8 @@ std::vector<TNetworkConfig>* NetworkConfigs;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
+this->FromFile = false;
+this->EnableLocalPort = false;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ListenBtnClick(TObject *Sender)
@@ -53,7 +55,7 @@ if (ListenBtn->Tag == 0) {
 			Server->Client[i]->Close();
 			}
 		Server->Close();
-		Form1->LocalPort->Enabled = true;
+		Form1->LocalPort->Enabled = this->EnableLocalPort;
 		Form1->RemotePort->Enabled = true;
 		Form1->RemoteAddr->Enabled = true;
 		Form1->RealIP->Enabled = true;
@@ -119,7 +121,6 @@ switch (Form1->ComboBox1->ItemIndex) {
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
-this->FromFile = false;
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
 NetworkConfigs = new std::vector<TNetworkConfig>(0);
@@ -189,6 +190,15 @@ while (fin.is_open()&&!fin.eof()){
 		Form1->ComboBox1->ItemIndex = bufstr.ToInt();
 		this->FromFile = true;
 		Form1->ComboBox1Change(Form1);
+		continue;
+		}
+	if (bufstr == "-enablelocalport") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if (bufstr == "1") {
+			this->EnableLocalPort = true;
+			this->LocalPort->Enabled = true;
+			}
 		continue;
 		}
 	if (bufstr == "-autostart") {

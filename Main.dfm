@@ -88,6 +88,7 @@ object Form1: TForm1
     Top = 24
     Width = 75
     Height = 21
+    Enabled = False
     TabOrder = 2
     Text = '3333'
   end
@@ -132,8 +133,8 @@ object Form1: TForm1
       'Claymore'#39's CryptoNote Miner v9.7')
   end
   object Button1: TButton
-    Left = 690
-    Top = 79
+    Left = 678
+    Top = 76
     Width = 75
     Height = 21
     Caption = 'Settings'

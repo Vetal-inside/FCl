@@ -40,6 +40,7 @@ private:
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	bool FromFile;
+	bool EnableLocalPort;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
