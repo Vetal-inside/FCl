@@ -114,35 +114,49 @@ __try {
 	for (i = 0; i < (int)InArr.size(); i++) {//and work with each of them
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
-			if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe||login BEGIN
-				if ((this->ServerLogic->minerVersion == cm91z)||(this->ServerLogic->minerVersion == cm93z_pl)) {
-					if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
-						json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(2)->ToString(), "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-						}
-					}
-				if (this->ServerLogic->minerVersion == cm97x) {
-					if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"login\"")){
-						json_subroot = (TJSONObject*) json_root->Get("params")->JsonValue;
-						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("login")->JsonValue->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-						InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("pass")->JsonValue->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-						}
-					}
-				}//mining.subscribe||login END
-			if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize||eth_submitLogin BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == this->ServerLogic->Methods->operator [](1))){
-					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-					}
-				}//mining.authorize END
-			if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
-				if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
-					json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
-					InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-					}
-				}//mining.submit END
+			switch (this->ServerLogic->minerVersion) {
+				case cm91z:
+				case cm93z_pl:
+					if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
+						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
+							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(2)->ToString(), "\""+this->RemoteAddress+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							}
+						}//mining.subscribe END
+					if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
+						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
+							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							}
+						}//mining.authorize END
+					if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
+						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
+							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							}
+						}//mining.submit END
+					break;
+				case cm74et:
+					if (json_root->Get("id")->JsonValue->ToString() == "2") {//eth_submitLogin BEGIN
+						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"eth_submitLogin\"")){
+							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							}
+						}//eth_submitLogin END
+					break;
+				case cm97x:
+					if (json_root->Get("id")->JsonValue->ToString() == "1") {//login BEGIN
+						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"login\"")){
+							json_subroot = (TJSONObject*) json_root->Get("params")->JsonValue;
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("login")->JsonValue->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("pass")->JsonValue->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							}
+						}//login END
+					break;
+				}
 			Out.operator +=(InArr.operator [](i));
 			Out.SetLength(Out.Length()+1);
 			Out.operator [](Out.Length()) = '\n';
