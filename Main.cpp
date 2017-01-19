@@ -27,7 +27,6 @@ std::vector<TNetworkConfig>* NetworkConfigs;
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
-this->FromFile = false;
 this->EnableLocalPort = false;
 }
 //---------------------------------------------------------------------------
@@ -82,10 +81,6 @@ Form3->LoadNetworkSettings();
 Form3->FillAdaptersData();
 Form3->FillHostsData();
 Form3->FillNetworkData();
-if (this->FromFile) {
-	this->FromFile = false;
-	return;
-	}
 switch (Form1->ComboBox1->ItemIndex) {
 	case 0 :
 		Form1->LocalPort->Text = "3333";
@@ -141,7 +136,7 @@ Form3->Show();
 //---------------------------------------------------------------------------
 void __fastcall TForm1::LoadFromFile()
 {
-bool flag = false;
+bool autostart = false;
 char* buf = "";
 UnicodeString bufstr;
 ifstream fin("config.txt");
@@ -188,8 +183,11 @@ while (fin.is_open()&&!fin.eof()){
 		fin >> (char*)buf;
 		bufstr = buf;
 		Form1->ComboBox1->ItemIndex = bufstr.ToInt();
-		this->FromFile = true;
-		Form1->ComboBox1Change(Form1);
+		Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+		Form3->LoadNetworkSettings();
+		Form3->FillAdaptersData();
+		Form3->FillHostsData();
+		Form3->FillNetworkData();
 		continue;
 		}
 	if (bufstr == "-enablelocalport") {
@@ -201,17 +199,25 @@ while (fin.is_open()&&!fin.eof()){
 			}
 		continue;
 		}
+	if (bufstr == "-proxyonly") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if (bufstr == "1") {
+			Server->ServerLogic->ProxyOnly = true;
+			}
+		continue;
+		}
 	if (bufstr == "-autostart") {
 		fin >> (char*)buf;
 		bufstr = buf;
 		if (bufstr == "1") {
-			flag = true;
+			autostart = true;
 			}
 		continue;
 		}
 	}
 fin.close();
-if (flag) {
+if (autostart) {
     this->ListenBtnClick(Form1);
 	}
 }

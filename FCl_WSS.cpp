@@ -124,14 +124,14 @@ __try {
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							}
 						}//mining.subscribe END
-					if (json_root->Get("id")->JsonValue->ToString() == "2") {//mining.authorize BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->ProxyOnly)) {//mining.authorize BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							}
 						}//mining.authorize END
-					if (json_root->Get("id")->JsonValue->ToString() == "4") {//mining.submit BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "4")&&(!this->ServerLogic->ProxyOnly)) {//mining.submit BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -139,7 +139,7 @@ __try {
 						}//mining.submit END
 					break;
 				case cm74et:
-					if (json_root->Get("id")->JsonValue->ToString() == "2") {//eth_submitLogin BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->ProxyOnly)) {//eth_submitLogin BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"eth_submitLogin\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -148,7 +148,7 @@ __try {
 						}//eth_submitLogin END
 					break;
 				case cm97x:
-					if (json_root->Get("id")->JsonValue->ToString() == "1") {//login BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "1")&&(!this->ServerLogic->ProxyOnly)) {//login BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"login\"")){
 							json_subroot = (TJSONObject*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("login")->JsonValue->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -210,6 +210,7 @@ this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
 this->UpdateSettings(this->minerVersion);
+this->ProxyOnly = false;
 }
 
 TLogic::TLogic(int vers)
@@ -219,6 +220,7 @@ this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
 this->UpdateSettings(this->minerVersion);
+this->ProxyOnly = false;
 }
 
 void TLogic::UpdateSettings(int vers)
