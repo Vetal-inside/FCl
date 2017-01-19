@@ -4,7 +4,7 @@ object Form1: TForm1
   BorderStyle = bsSingle
   Caption = 'FCl project: Windows MITM proxy for proprietary miners'
   ClientHeight = 108
-  ClientWidth = 773
+  ClientWidth = 953
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -65,6 +65,20 @@ object Form1: TForm1
     Width = 17
     Height = 13
     Caption = 'Log'
+  end
+  object Label9: TLabel
+    Left = 768
+    Top = 57
+    Width = 161
+    Height = 13
+    Caption = 'Donation to miner dev - 0 hours'
+  end
+  object Label8: TLabel
+    Left = 768
+    Top = 8
+    Width = 129
+    Height = 13
+    Caption = 'Donation - 1 hours per day'
   end
   object RemotePort: TEdit
     Left = 447
@@ -133,7 +147,7 @@ object Form1: TForm1
       'Claymore'#39's CryptoNote Miner v9.7')
   end
   object Button1: TButton
-    Left = 678
+    Left = 536
     Top = 76
     Width = 75
     Height = 21
@@ -155,5 +169,25 @@ object Form1: TForm1
       'Without log'
       'Short log'
       'Full log')
+  end
+  object TrackBar1: TTrackBar
+    Left = 768
+    Top = 24
+    Width = 161
+    Height = 21
+    Max = 23
+    TabOrder = 9
+    ThumbLength = 15
+    OnChange = TrackBar1Change
+  end
+  object TrackBar2: TTrackBar
+    Left = 768
+    Top = 76
+    Width = 161
+    Height = 21
+    Max = 1
+    TabOrder = 10
+    ThumbLength = 15
+    OnChange = TrackBar2Change
   end
 end

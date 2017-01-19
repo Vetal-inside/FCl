@@ -30,7 +30,6 @@ this->Body = new UnicodeString;
 this->Output = RE;
 this->LogLevel = 1;
 this->LogVersion = 0;
-this->Methods = '\0';
 }
 
 void TLog::Add(UnicodeString ToLog)

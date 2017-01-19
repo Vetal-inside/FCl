@@ -216,3 +216,16 @@ if (flag) {
 	}
 }
 //---------------------------------------------------------------------------
+void __fastcall TForm1::TrackBar1Change(TObject *Sender)
+{
+Form1->Label8->Caption = "Donation - "+IntToStr(Form1->TrackBar1->Position + 1)+" hours per day";
+Form1->TrackBar2->Max = 24 - Form1->TrackBar1->Position - 1;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::TrackBar2Change(TObject *Sender)
+{
+Form1->Label9->Caption = "Donation to miner dev - "+IntToStr(Form1->TrackBar2->Position)+" hours";
+}
+//---------------------------------------------------------------------------
+

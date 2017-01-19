@@ -29,7 +29,6 @@ UnicodeString* Body;
 TRichEdit* Output;
 short LogLevel;
 short LogVersion;
-std::vector<UnicodeString>* Methods;
 
 TLog(TRichEdit*);
 void Add(UnicodeString ToLog);

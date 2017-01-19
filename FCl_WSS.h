@@ -49,7 +49,7 @@ public:
 Version minerVersion;
 std::vector<UnicodeString>* Pools;
 short LogLevel;//NAU//0 - not, 1 - short, 2 - full
-std::vector<UnicodeString>* Methods;
+//std::vector<UnicodeString>* Methods;
 
 TLogic();
 TLogic(int);

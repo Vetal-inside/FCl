@@ -209,8 +209,6 @@ this->minerVersion = cm91z;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
-this->Methods = new std::vector<UnicodeString>;
-this->Methods->resize(0);
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -220,8 +218,6 @@ this->minerVersion = (Version)vers;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
-this->Methods = new std::vector<UnicodeString>;
-this->Methods->resize(0);
 this->UpdateSettings(this->minerVersion);
 }
 
@@ -236,42 +232,18 @@ switch (this->minerVersion) {
 		this->Pools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
 		this->Pools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
 		this->Pools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
-		this->Methods->resize(7);
-		this->Methods->operator [](0) = "\"mining.subscribe\"";							//id=1
-		this->Methods->operator [](1) = "\"mining.authorize\"";							//id=2
-		this->Methods->operator [](2) = "didnt_seen";		  							//id=3
-		this->Methods->operator [](3) = "\"mining.submit\"";							//id=4
-		this->Methods->operator [](4) = "\"mining.extranonce.subscribe\"";				//id=5
-		this->Methods->operator [](5) = "didnt_seen";		 							//id=6
-		this->Methods->operator [](6) = "\"mining.set_target\"";						//id=null
 		break;
 	case cm74et:
 		this->Pools->resize(3);
 		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";							//Normal 8008
 		this->Pools->operator [](1) = "us1.ethpool.org";								//Normal 3333
 		this->Pools->operator [](2) = "us1.ethermine.org";								//Normal 4444
-		this->Methods->resize(7);
-		this->Methods->operator [](0) = "didnt_seen";		  							//id=1
-		this->Methods->operator [](1) = "\"eth_submitLogin\"";							//id=2
-		this->Methods->operator [](2) = "\"eth_getWork\"";								//id=3
-		this->Methods->operator [](3) = "\"eth_submitWork\"";							//id=4
-		this->Methods->operator [](4) = "didnt_seen";		  							//id=5
-		this->Methods->operator [](5) = "\"eth_submitHashrate\"";						//id=6
-		this->Methods->operator [](6) = "didnt_seen";			  						//id=null
 		break;
 	case cm97x:
 		this->Pools->resize(3);
-		this->Pools->operator [](0) = "cryptonight.usa.nicehash.com";					//SSL 3355
-		this->Pools->operator [](1) = "xmr.suprnova.cc";								//SSL 5222
+		this->Pools->operator [](0) = "cryptonight.usa.nicehash.com";					//Normal 3355
+		this->Pools->operator [](1) = "xmr.suprnova.cc";								//Normal 5222
 		this->Pools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
-		this->Methods->resize(7);
-		this->Methods->operator [](0) = "didnt_seen";		  							//id=1
-		this->Methods->operator [](1) = "\"login\"";									//id=2
-		this->Methods->operator [](2) = "didnt_seen";									//id=3
-		this->Methods->operator [](3) = "didnt_seen";									//id=4
-		this->Methods->operator [](4) = "\"submit\""; 		  							//id=5
-		this->Methods->operator [](5) = "didnt_seen";									//id=6
-		this->Methods->operator [](6) = "didnt_seen";			  						//id=null
 		break;
 	}
 
@@ -280,7 +252,6 @@ switch (this->minerVersion) {
 void TLogic::SetServerLogic(TServer* Server)
 {
 Server->ServerLog->LogVersion = (short)Server->ServerLogic->minerVersion;
-Server->ServerLog->Methods = Server->ServerLogic->Methods;
 switch (this->minerVersion) {
 	case cm91z:
 	case cm74et:
