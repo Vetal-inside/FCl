@@ -7,6 +7,7 @@
 #include "Unit2.h"
 #include <vector>
 #include <DBXJSON.hpp>
+#include <Vcl.ExtCtrls.hpp>
 
 class TLogic;
 
@@ -57,5 +58,29 @@ void UpdateSettings(int);
 void SetServerLogic(TServer*);
 
 ~TLogic();
+};
+
+class TSwitcher : public TTimer
+{
+public:
+long OSDInterval;
+long DDInterval;
+long NInterval;
+UnicodeString RemotePort;
+UnicodeString RemoteIP;
+UnicodeString RemoteAddress;
+UnicodeString OurLogin;
+TServer* Serv;
+short CurrentMode;//0 - OSD, 1 - DD, 2 - normal
+UnicodeString StartTime;
+
+inline __fastcall virtual TSwitcher(System::Classes::TComponent* AOwner) : TTimer(AOwner) { }
+void Init(short,short,TServer*,UnicodeString);
+void SetOSD(long);
+void SetDD(long);
+void SetN(long);
+void __fastcall Switch(TObject *Sender);
+void Start();
+void Stop();
 };
 #endif

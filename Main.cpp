@@ -22,6 +22,7 @@ TLog* Log;
 TServer* Server;
 TSslContext* SslContext;
 TLogic* Logic;
+TSwitcher* Switcher;
 std::vector<TNetworkConfig>* NetworkConfigs;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -37,6 +38,8 @@ if (ListenBtn->Tag == 0) {
 	Server->SetLogLevel(Form1->ComboBox2->ItemIndex);
 	Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
 	Logic->SetServerLogic(Server);
+	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Server,Form1->StartTime->Text);
+	Switcher->Start();
 	Server->Listen();
 	LocalPort->Enabled = false;
 	RemotePort->Enabled = false;
@@ -54,6 +57,7 @@ if (ListenBtn->Tag == 0) {
 			Server->Client[i]->Close();
 			}
 		Server->Close();
+		Switcher->Stop();
 		Form1->LocalPort->Enabled = this->EnableLocalPort;
 		Form1->RemotePort->Enabled = true;
 		Form1->RemoteAddr->Enabled = true;
@@ -125,6 +129,8 @@ Server->SslContext = SslContext;
 Server->ServerLog = Log;
 Server->ServerLogic = Logic;
 Logic->SetServerLogic(Server);
+Switcher = new TSwitcher(Form1);
+Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
 this->LoadFromFile();
 }
 //---------------------------------------------------------------------------
@@ -212,6 +218,28 @@ while (fin.is_open()&&!fin.eof()){
 		bufstr = buf;
 		if (bufstr == "1") {
 			autostart = true;
+			}
+		continue;
+		}
+	if (bufstr == "-starttime") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		Form1->StartTime->Text = bufstr;
+		continue;
+		}
+	if (bufstr == "-donationosd") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if ((bufstr.ToInt() > 0)&&(bufstr.ToInt() < 25)) {
+			Form1->TrackBar1->Position = bufstr.ToInt() -1;
+			}
+		continue;
+		}
+	if (bufstr == "-donationdev") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if ((bufstr.ToInt() > 0)&&((bufstr.ToInt() + Form1->TrackBar1->Position) < 24)) {
+			Form1->TrackBar2->Position = bufstr.ToInt();
 			}
 		continue;
 		}

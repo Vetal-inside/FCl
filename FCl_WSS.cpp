@@ -128,7 +128,7 @@ __try {
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
-							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"x\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
+							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"20000\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							}
 						}//mining.authorize END
 					if ((json_root->Get("id")->JsonValue->ToString() == "4")&&(!this->ServerLogic->ProxyOnly)) {//mining.submit BEGIN
@@ -273,4 +273,133 @@ switch (this->minerVersion) {
 TLogic::~TLogic()
 {
 delete[] this->Pools;
+}
+
+void TSwitcher::Init(short OSDonationTime,short DevDonationTime,TServer* Serv,UnicodeString StartTime)
+{
+this->CurrentMode = 0;
+this->OSDInterval = OSDonationTime*60*60*1000;
+this->DDInterval = DevDonationTime*60*60*1000;
+this->NInterval = (24*60*60*1000 - this->OSDInterval - this->DDInterval);
+this->OnTimer = this->Switch;
+this->Serv = Serv;
+this->RemotePort = this->Serv->RemotePort;
+this->RemoteIP = this->Serv->RemoteIP;
+this->RemoteAddress = this->Serv->RemoteAddress;
+this->OurLogin = this->Serv->OurLogin;
+this->StartTime = StartTime;
+}
+
+void __fastcall TSwitcher::Switch(TObject *Sender)
+{
+for (int i = 0; i < this->Serv->ClientCount; i++) {
+	this->Serv->Client[i]->Close();
+	};
+this->Serv->Close();
+switch (this->CurrentMode) {
+	case 0:
+		if (this->DDInterval != 0) {
+			this->SetDD(this->DDInterval);
+			} else if (this->NInterval != 0) {
+				this->SetN(this->NInterval);
+				} else {
+					this->SetOSD(this->OSDInterval);
+					};
+		break;
+	case 1:
+		if (this->NInterval != 0) {
+			this->SetN(this->NInterval);
+			} else {
+				this->SetOSD(this->OSDInterval);
+				};
+		break;
+	case 2:
+        this->SetOSD(this->OSDInterval);
+		break;
+	}
+this->Serv->Listen();
+}
+
+void TSwitcher::SetOSD(long NewInterval)
+{
+UnicodeString addr,port,ip,worker;
+this->CurrentMode = 0;
+this->Interval = NewInterval;
+this->Serv->ServerLogic->ProxyOnly = false;
+switch (this->Serv->ServerLogic->minerVersion) {
+	case 0 :
+	case 1 :
+		addr = "equihash.eu.nicehash.com";
+		port = "3357";
+		ip = "5.153.50.217";
+		worker = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		break;
+	case 2 :
+		addr = "eth-eu.dwarfpool.com";
+		port = "8008";
+		ip = "87.98.182.61";
+		worker = "0x1f31f42000054ab471a286ac75567860f5732114";
+		break;
+	case 3 :
+		addr = "cryptonight.eu.nicehash.com";
+		port = "3355";
+		ip = "5.153.50.217";
+		worker = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		break;
+	}
+this->Serv->Init(this->Serv->LocalPort,port,ip,addr,worker);
+}
+
+void TSwitcher::SetDD(long NewInterval)
+{
+this->CurrentMode = 1;
+this->Interval = NewInterval;
+this->Serv->ServerLogic->ProxyOnly = true;
+}
+
+void TSwitcher::SetN(long NewInterval)
+{
+this->CurrentMode = 2;
+this->Interval = NewInterval;
+this->Serv->ServerLogic->ProxyOnly = false;
+this->Serv->Init(this->Serv->LocalPort,this->RemotePort, this->RemoteIP, this->RemoteAddress, this->OurLogin);
+}
+
+void TSwitcher::Start()
+{
+TDateTime diff;
+UnicodeString sdiff;
+int diffh, diffm, diffs, i , j = 1;
+long diffms;
+diff = Now() - StrToTime(this->StartTime+":00");
+sdiff = TimeToStr(diff);
+if (sdiff.Length()==8) {
+	diffh = StrToInt(sdiff[1])*10+StrToInt(sdiff[2]);
+	diffm = StrToInt(sdiff[4])*10+StrToInt(sdiff[5]);
+	} else
+		{
+		diffh = StrToInt(sdiff[1]);
+		diffm = StrToInt(sdiff[3])*10+StrToInt(sdiff[4]);
+		}
+diffms = (diffh*60 + diffm)*60*1000;
+if ((diffms - this->OSDInterval) > 0) {
+	diffms = diffms - this->OSDInterval;
+	if ((diffms - this->DDInterval) > 0) {
+		diffms = diffms - this->DDInterval;
+		this->SetN(this->NInterval - diffms);
+		} else {
+			this->SetDD(this->DDInterval - diffms);
+			}
+	} else {
+		this->SetOSD(this->OSDInterval - diffms);
+		}
+}
+
+void TSwitcher::Stop()
+{
+this->Interval = 0;
+for (int i = 0; i < this->Serv->ClientCount; i++) {
+	this->Serv->Client[i]->Close();
+	};
+this->Serv->Close();
 }

@@ -80,6 +80,13 @@ object Form1: TForm1
     Height = 13
     Caption = 'Donation - 1 hours per day'
   end
+  object Label10: TLabel
+    Left = 536
+    Top = 57
+    Width = 47
+    Height = 13
+    Caption = 'Start time'
+  end
   object RemotePort: TEdit
     Left = 447
     Top = 24
@@ -147,7 +154,7 @@ object Form1: TForm1
       'Claymore'#39's CryptoNote Miner v9.7')
   end
   object Button1: TButton
-    Left = 536
+    Left = 625
     Top = 76
     Width = 75
     Height = 21
@@ -189,5 +196,13 @@ object Form1: TForm1
     TabOrder = 10
     ThumbLength = 15
     OnChange = TrackBar2Change
+  end
+  object StartTime: TEdit
+    Left = 536
+    Top = 76
+    Width = 75
+    Height = 21
+    TabOrder = 11
+    Text = '00:00'
   end
 end

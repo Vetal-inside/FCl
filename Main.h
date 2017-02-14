@@ -34,6 +34,8 @@ __published:	// IDE-managed Components
 	TLabel *Label9;
 	TTrackBar *TrackBar2;
 	TLabel *Label8;
+	TEdit *StartTime;
+	TLabel *Label10;
 	void __fastcall ListenBtnClick(TObject *Sender);
 	void __fastcall FormCanResize(TObject *Sender, int &NewWidth, int &NewHeight, bool &Resize);
 	void __fastcall ComboBox1Change(TObject *Sender);
