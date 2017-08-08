@@ -172,8 +172,8 @@ void __fastcall TForm3::FillHostsData()
 this->Memo1->Lines->Clear();
 int i;
 int rig_number = this->ComboBox1->ItemIndex + 1;
-for (i = 0; i < (int)Logic->Pools->size(); i++) {
-	this->Memo1->Lines->Add("8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+"  "+Logic->Pools->operator [](i));
+for (i = 0; i < Logic->GetPoolsCount(); i++) {
+	this->Memo1->Lines->Add("8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+"  "+Logic->GetPoolDomainName(i));
 	};
 }
 
@@ -191,7 +191,7 @@ if (NetworkConfigs->operator [](0).DNS.size()==2) {
 	this->Memo2->Lines->Add("netsh interface ipv4 add dnsservers \""+name+"\" "+NetworkConfigs->operator [](0).DNS[1]+" index=2");
 	}
 this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address="+NetworkConfigs->operator [](i).ipAddress+" mask="+mask+" gateway="+gateway);
-for (i = 0; i < (int)Logic->Pools->size(); i++) {
+for (i = 0; i < Logic->GetPoolsCount(); i++) {
 	this->Memo2->Lines->Add("netsh interface ipv4 add address name=\""+name+"\" address=8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+" mask=255.255.255.255 gateway="+gateway);
 	}
 this->Memo2->Lines->Add("pause");

@@ -36,8 +36,8 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 if (ListenBtn->Tag == 0) {
 	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
 	Server->SetLogLevel(Form1->ComboBox2->ItemIndex);
-	Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
-	Logic->SetServerLogic(Server);
+	Logic->GetSettings(Form1->ComboBox1->ItemIndex);
+	Logic->ApplySettings(Server);
 	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Server,Form1->StartTime->Text);
 	Switcher->Start();
 	Server->Listen();
@@ -80,7 +80,7 @@ Resize = false;
 
 void __fastcall TForm1::ComboBox1Change(TObject *Sender)
 {
-Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+Logic->GetSettings(Form1->ComboBox1->ItemIndex);
 Form3->LoadNetworkSettings();
 Form3->FillAdaptersData();
 Form3->FillHostsData();
@@ -121,14 +121,14 @@ switch (Form1->ComboBox1->ItemIndex) {
 void __fastcall TForm1::FormShow(TObject *Sender)
 {
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
-Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+Logic->GetSettings(Form1->ComboBox1->ItemIndex);
 NetworkConfigs = new std::vector<TNetworkConfig>(0);
 SslContext = new TSslContext((TComponent*)Form1);
 Server = new TServer((TComponent*)Form1);
 Server->SslContext = SslContext;
 Server->ServerLog = Log;
 Server->ServerLogic = Logic;
-Logic->SetServerLogic(Server);
+Logic->ApplySettings(Server);
 Switcher = new TSwitcher(Form1);
 Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
 this->LoadFromFile();
@@ -189,7 +189,7 @@ while (fin.is_open()&&!fin.eof()){
 		fin >> (char*)buf;
 		bufstr = buf;
 		Form1->ComboBox1->ItemIndex = bufstr.ToInt();
-		Logic->UpdateSettings(Form1->ComboBox1->ItemIndex);
+		Logic->GetSettings(Form1->ComboBox1->ItemIndex);
 		Form3->LoadNetworkSettings();
 		Form3->FillAdaptersData();
 		Form3->FillHostsData();
@@ -209,7 +209,7 @@ while (fin.is_open()&&!fin.eof()){
 		fin >> (char*)buf;
 		bufstr = buf;
 		if (bufstr == "1") {
-			Server->ServerLogic->ProxyOnly = true;
+			Server->ServerLogic->SetProxyOnly(true);
 			}
 		continue;
 		}

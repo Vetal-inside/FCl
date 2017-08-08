@@ -52,17 +52,17 @@ Client->LineEnd = "\r\n";
 void __fastcall TServer::RemoteSessionConnected(TObject *Sender, WORD Error)
 {
 if (Error != 0) {exit(Error);};
-if (this->ServerLogic->LogLevel>0) {
+if (this->ServerLogic->GetLogLevel()>0) {
 	this->ServerLog->Header->operator =("Connection Opened");
 	this->ServerLog->Add("");
 	}
 if (((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd != "") {
-	if (this->ServerLogic->LogLevel>0) {
+	if (this->ServerLogic->GetLogLevel()>0) {
 		this->ServerLog->Header->operator =("Rcvd from miner");
 		this->ServerLog->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
 	((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd = ExchangeString(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
-	if (this->ServerLogic->LogLevel>0) {
+	if (this->ServerLogic->GetLogLevel()>0) {
 		this->ServerLog->Header->operator =("Sent to pool");
 		this->ServerLog->Add(((TClient*)(((TWSocket*)Sender)->Owner))->Rcvd);
 		}
@@ -77,14 +77,14 @@ UnicodeString FromRemote;
 if (Error != 0) {exit(Error);};
 FromRemote = ((TClient*)(((TWSocket*)Sender)))->ReceiveStr();
 if (FromRemote != "") {
-	if (this->ServerLogic->LogLevel>0) {
+	if (this->ServerLogic->GetLogLevel()>0) {
 		this->ServerLog->Header->operator =("From pool");
 		this->ServerLog->Add(FromRemote);
 		}
 	if (((TClient*)(((TWSocket*)Sender)->Owner))->State == wsConnected) {
 		((TClient*)(((TWSocket*)Sender)->Owner))->SendStr(FromRemote);
 		} else {
-			if (this->ServerLogic->LogLevel>0) {
+			if (this->ServerLogic->GetLogLevel()>0) {
 				this->ServerLog->Header->operator =("Error: Local has closed");
 				this->ServerLog->Add("");
 				}
@@ -114,7 +114,7 @@ __try {
 	for (i = 0; i < (int)InArr.size(); i++) {//and work with each of them
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
-			switch (this->ServerLogic->minerVersion) {
+			switch (this->ServerLogic->GetMinerVersion()) {
 				case cm91z:
 				case cm93z_pl:
 					if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
@@ -124,14 +124,14 @@ __try {
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(3)->ToString(), "\""+this->RemotePort+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							}
 						}//mining.subscribe END
-					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->ProxyOnly)) {//mining.authorize BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->GetProxyOnly())) {//mining.authorize BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.authorize\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(1)->ToString(), "\"20000\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
 							}
 						}//mining.authorize END
-					if ((json_root->Get("id")->JsonValue->ToString() == "4")&&(!this->ServerLogic->ProxyOnly)) {//mining.submit BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "4")&&(!this->ServerLogic->GetProxyOnly())) {//mining.submit BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.submit\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -139,7 +139,7 @@ __try {
 						}//mining.submit END
 					break;
 				case cm74et:
-					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->ProxyOnly)) {//eth_submitLogin BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "2")&&(!this->ServerLogic->GetProxyOnly())) {//eth_submitLogin BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"eth_submitLogin\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_array->Get(0)->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -148,7 +148,7 @@ __try {
 						}//eth_submitLogin END
 					break;
 				case cm97x:
-					if ((json_root->Get("id")->JsonValue->ToString() == "1")&&(!this->ServerLogic->ProxyOnly)) {//login BEGIN
+					if ((json_root->Get("id")->JsonValue->ToString() == "1")&&(!this->ServerLogic->GetProxyOnly())) {//login BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"login\"")){
 							json_subroot = (TJSONObject*) json_root->Get("params")->JsonValue;
 							InArr.operator [](i) = StringReplace(InArr.operator [](i),json_subroot->Get("login")->JsonValue->ToString(), "\""+this->OurLogin+"\"",(TReplaceFlags)(TReplaceFlags()<< rfReplaceAll << rfIgnoreCase));
@@ -173,12 +173,12 @@ void __fastcall TServer::ClientDataAvailable(TObject *Sender, WORD Error)
 if (Error != 0) {exit(Error);};
 ((TClient*)Sender)->Rcvd = ((TClient*)Sender)->Rcvd + ((TClient*)Sender)->ReceiveStr();
 if ((((TClient*)Sender)->RemoteSocket->State == wsConnected) &&(((TClient*)Sender)->Rcvd != "")) {
-	if (this->ServerLogic->LogLevel>0) {
+	if (this->ServerLogic->GetLogLevel()>0) {
 		this->ServerLog->Header->operator =("Rcvd from miner");
 		this->ServerLog->Add(((TClient*)Sender)->Rcvd);
 		}
 	((TClient*)Sender)->Rcvd = ExchangeString(((TClient*)Sender)->Rcvd);
-	if (this->ServerLogic->LogLevel>0) {
+	if (this->ServerLogic->GetLogLevel()>0) {
 		this->ServerLog->Header->operator =("Sent to pool");
 		this->ServerLog->Add(((TClient*)Sender)->Rcvd);
 		}
@@ -199,7 +199,7 @@ CanClose = true;
 
 void __fastcall TServer::SetLogLevel(short level)
 {
-this->ServerLogic->LogLevel = level;
+this->ServerLogic->SetLogLevel(level);
 this->ServerLog->LogLevel = level;
 }
 
@@ -209,7 +209,7 @@ this->minerVersion = cm91z;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
-this->UpdateSettings(this->minerVersion);
+this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
 }
 
@@ -219,11 +219,11 @@ this->minerVersion = (Version)vers;
 this->Pools = new std::vector<UnicodeString>;
 this->Pools->resize(0);
 this->LogLevel = 1;
-this->UpdateSettings(this->minerVersion);
+this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
 }
 
-void TLogic::UpdateSettings(int vers)
+void TLogic::GetSettings(int vers)
 {
 this->minerVersion = (Version)vers;
 switch (this->minerVersion) {
@@ -251,7 +251,7 @@ switch (this->minerVersion) {
 
 }
 
-void TLogic::SetServerLogic(TServer* Server)
+void TLogic::ApplySettings(TServer* Server)
 {
 Server->ServerLog->LogVersion = (short)Server->ServerLogic->minerVersion;
 switch (this->minerVersion) {
@@ -269,6 +269,42 @@ switch (this->minerVersion) {
 		break;
 	}
 }
+
+void TLogic::SetLogLevel(short newvalue)
+{
+this->LogLevel = newvalue;
+}
+
+short TLogic::GetLogLevel()
+{
+return this->LogLevel;
+}
+
+void TLogic::SetProxyOnly(short newvalue)
+{
+this->ProxyOnly = newvalue;
+}
+
+short TLogic::GetProxyOnly()
+{
+return this->ProxyOnly;
+}
+
+Version TLogic::GetMinerVersion()
+{
+return this->minerVersion;
+}
+
+UnicodeString TLogic::GetPoolDomainName(int inx)
+{
+return this->Pools->operator [](inx);
+}
+
+int TLogic::GetPoolsCount()
+{
+return (int)this->Pools->size();
+}
+
 
 TLogic::~TLogic()
 {
@@ -325,8 +361,8 @@ void TSwitcher::SetOSD(long NewInterval)
 UnicodeString addr,port,ip,worker;
 this->CurrentMode = 0;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->ProxyOnly = false;
-switch (this->Serv->ServerLogic->minerVersion) {
+this->Serv->ServerLogic->SetProxyOnly(false);
+switch (this->Serv->ServerLogic->GetMinerVersion()) {
 	case 0 :
 	case 1 :
 		addr = "equihash.eu.nicehash.com";
@@ -354,14 +390,14 @@ void TSwitcher::SetDD(long NewInterval)
 {
 this->CurrentMode = 1;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->ProxyOnly = true;
+this->Serv->ServerLogic->SetProxyOnly(true);
 }
 
 void TSwitcher::SetN(long NewInterval)
 {
 this->CurrentMode = 2;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->ProxyOnly = false;
+this->Serv->ServerLogic->SetProxyOnly(false);
 this->Serv->Init(this->Serv->LocalPort,this->RemotePort, this->RemoteIP, this->RemoteAddress, this->OurLogin);
 }
 

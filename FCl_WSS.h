@@ -46,17 +46,24 @@ inline __fastcall virtual ~TServer(void) { }
 enum Version {cm91z = 0, cm93z_pl, cm74et, cm97x};
 class TLogic
 {
-public:
+private:
 Version minerVersion;
 std::vector<UnicodeString>* Pools;
-short LogLevel;//NAU//0 - not, 1 - short, 2 - full
-bool ProxyOnly;//NAU
+short LogLevel;//0 - not, 1 - short, 2 - full
+short ProxyOnly;
 
+public:
 TLogic();
 TLogic(int);
-void UpdateSettings(int);
-void SetServerLogic(TServer*);
-
+void GetSettings(int);
+void ApplySettings(TServer*);
+void SetLogLevel(short);//			MUST BE
+void SetProxyOnly(short);//			SETTED MANUALLY
+short GetLogLevel();
+short GetProxyOnly();
+Version GetMinerVersion();
+UnicodeString GetPoolDomainName(int);
+int GetPoolsCount();
 ~TLogic();
 };
 
