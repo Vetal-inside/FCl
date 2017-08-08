@@ -69,7 +69,7 @@ int GetPoolsCount();
 
 class TSwitcher : public TTimer
 {
-public:
+private:
 long OSDInterval;
 long DDInterval;
 long NInterval;
@@ -81,13 +81,16 @@ TServer* Serv;
 short CurrentMode;//0 - OSD, 1 - DD, 2 - normal
 UnicodeString StartTime;
 
-inline __fastcall virtual TSwitcher(System::Classes::TComponent* AOwner) : TTimer(AOwner) { }
-void Init(short,short,TServer*,UnicodeString);
 void SetOSD(long);
 void SetDD(long);
 void SetN(long);
+
+public:
+inline __fastcall virtual TSwitcher(System::Classes::TComponent* AOwner) : TTimer(AOwner) { }
 void __fastcall Switch(TObject *Sender);
+void Init(short,short,TServer*,UnicodeString);
 void Start();
 void Stop();
+
 };
 #endif

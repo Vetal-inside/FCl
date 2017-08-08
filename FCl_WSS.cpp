@@ -328,10 +328,7 @@ this->StartTime = StartTime;
 
 void __fastcall TSwitcher::Switch(TObject *Sender)
 {
-for (int i = 0; i < this->Serv->ClientCount; i++) {
-	this->Serv->Client[i]->Close();
-	};
-this->Serv->Close();
+this->Stop();
 switch (this->CurrentMode) {
 	case 0:
 		if (this->DDInterval != 0) {
