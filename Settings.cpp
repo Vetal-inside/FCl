@@ -173,7 +173,7 @@ this->Memo1->Lines->Clear();
 int i;
 int rig_number = this->ComboBox1->ItemIndex + 1;
 for (i = 0; i < Logic->GetPoolsCount(); i++) {
-	this->Memo1->Lines->Add("8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+"  "+Logic->GetPoolDomainName(i));
+	this->Memo1->Lines->Add("8.8." + IntToStr(rig_number) + ".10"+IntToStr(i)+"  "+Logic->GetFeePoolDomainName(i));
 	};
 }
 

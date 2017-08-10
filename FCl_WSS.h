@@ -48,7 +48,7 @@ class TLogic
 {
 private:
 Version minerVersion;
-std::vector<UnicodeString>* Pools;
+std::vector<UnicodeString>* DevFeePools;
 short LogLevel;//0 - not, 1 - short, 2 - full
 short ProxyOnly;
 
@@ -62,7 +62,7 @@ void SetProxyOnly(short);//			SETTED MANUALLY
 short GetLogLevel();
 short GetProxyOnly();
 Version GetMinerVersion();
-UnicodeString GetPoolDomainName(int);
+UnicodeString GetFeePoolDomainName(int);
 int GetPoolsCount();
 ~TLogic();
 };

@@ -206,8 +206,8 @@ this->ServerLog->LogLevel = level;
 TLogic::TLogic()
 {
 this->minerVersion = cm91z;
-this->Pools = new std::vector<UnicodeString>;
-this->Pools->resize(0);
+this->DevFeePools = new std::vector<UnicodeString>;
+this->DevFeePools->resize(0);
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
@@ -216,8 +216,8 @@ this->ProxyOnly = false;
 TLogic::TLogic(int vers)
 {
 this->minerVersion = (Version)vers;
-this->Pools = new std::vector<UnicodeString>;
-this->Pools->resize(0);
+this->DevFeePools = new std::vector<UnicodeString>;
+this->DevFeePools->resize(0);
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
@@ -229,23 +229,23 @@ this->minerVersion = (Version)vers;
 switch (this->minerVersion) {
 	case cm91z:
 	case cm93z_pl:
-		this->Pools->resize(4);
-		this->Pools->operator [](0) = "us1-zcash.flypool.org";							//Normal 3333		SSL 3443
-		this->Pools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
-		this->Pools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
-		this->Pools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
+		this->DevFeePools->resize(4);
+		this->DevFeePools->operator [](0) = "us1-zcash.flypool.org";							//Normal 3333		SSL 3443
+		this->DevFeePools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
+		this->DevFeePools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
+		this->DevFeePools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
 		break;
 	case cm74et:
-		this->Pools->resize(3);
-		this->Pools->operator [](0) = "eth-eu.dwarfpool.com";							//Normal 8008
-		this->Pools->operator [](1) = "us1.ethpool.org";								//Normal 3333
-		this->Pools->operator [](2) = "us1.ethermine.org";								//Normal 4444
+		this->DevFeePools->resize(3);
+		this->DevFeePools->operator [](0) = "eth-eu.dwarfpool.com";							//Normal 8008
+		this->DevFeePools->operator [](1) = "us1.ethpool.org";								//Normal 3333
+		this->DevFeePools->operator [](2) = "us1.ethermine.org";								//Normal 4444
 		break;
 	case cm97x:
-		this->Pools->resize(3);
-		this->Pools->operator [](0) = "cryptonight.usa.nicehash.com";					//Normal 3355
-		this->Pools->operator [](1) = "xmr.suprnova.cc";								//Normal 5222
-		this->Pools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
+		this->DevFeePools->resize(3);
+		this->DevFeePools->operator [](0) = "cryptonight.usa.nicehash.com";					//Normal 3355
+		this->DevFeePools->operator [](1) = "xmr.suprnova.cc";								//Normal 5222
+		this->DevFeePools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
 		break;
 	}
 
@@ -295,20 +295,20 @@ Version TLogic::GetMinerVersion()
 return this->minerVersion;
 }
 
-UnicodeString TLogic::GetPoolDomainName(int inx)
+UnicodeString TLogic::GetFeePoolDomainName(int inx)
 {
-return this->Pools->operator [](inx);
+return this->DevFeePools->operator [](inx);
 }
 
 int TLogic::GetPoolsCount()
 {
-return (int)this->Pools->size();
+return (int)this->DevFeePools->size();
 }
 
 
 TLogic::~TLogic()
 {
-delete[] this->Pools;
+delete[] this->DevFeePools;
 }
 
 void TSwitcher::Init(short OSDonationTime,short DevDonationTime,TServer* Serv,UnicodeString StartTime)
