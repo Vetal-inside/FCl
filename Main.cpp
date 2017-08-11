@@ -51,6 +51,9 @@ if (ListenBtn->Tag == 0) {
 	ComboBox1->Enabled = false;
 	ComboBox2->Enabled = false;
 	Button1->Enabled = false;
+	StartTime->Enabled = false;
+	TrackBar1->Enabled = false;
+	TrackBar2->Enabled = false;
 	Form3->Hide();
 	ListenBtn->Caption = "Cancel";
 	ListenBtn->Tag = 1;
@@ -67,6 +70,9 @@ if (ListenBtn->Tag == 0) {
 		Form1->edWorker->Enabled = true;
 		Form1->ComboBox1->Enabled = true;
 		Form1->ComboBox2->Enabled = true;
+		StartTime->Enabled = true;
+		TrackBar1->Enabled = true;
+		TrackBar2->Enabled = true;
 		Button1->Enabled = true;
 		Form1->ListenBtn->Caption = "Listen";
 		Form1->ListenBtn->Tag = 0;
