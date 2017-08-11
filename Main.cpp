@@ -34,10 +34,12 @@ this->EnableLocalPort = false;
 void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 if (ListenBtn->Tag == 0) {
-	Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
+	Server->Init();
 	Server->SetLogLevel(Form1->ComboBox2->ItemIndex);
 	Logic->GetSettings(Form1->ComboBox1->ItemIndex);
 	Logic->ApplySettings(Server);
+	Logic->GetNProxyParams(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
+	Logic->ApplyProxyParams(Server,2);
 	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Server,Form1->StartTime->Text);
 	Switcher->Start();
 	Server->Listen();
@@ -88,34 +90,22 @@ Form3->FillNetworkData();
 switch (Form1->ComboBox1->ItemIndex) {
 	case 0 :
 		Form1->LocalPort->Text = "3333";
-		Form1->RemoteAddr->Text = "equihash.eu.nicehash.com";
-		Form1->RemotePort->Text = "3357";
-		Form1->RealIP->Text = "5.153.50.217";
-		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	case 1 :
 		Form1->LocalPort->Text = "3443";
-		Form1->RemoteAddr->Text = "equihash.eu.nicehash.com";
-		Form1->RemotePort->Text = "3357";
-		Form1->RealIP->Text = "5.153.50.217";
-		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	case 2 :
 		Form1->LocalPort->Text = "8008";
-		Form1->RemoteAddr->Text = "eth-eu.dwarfpool.com";
-		Form1->RemotePort->Text = "8008";
-		Form1->RealIP->Text = "87.98.182.61";
-		Form1->edWorker->Text = "0x1f31f42000054ab471a286ac75567860f5732114";
 		break;
 	case 3 :
 		Form1->LocalPort->Text = "3355";
-		Form1->RemoteAddr->Text = "cryptonight.eu.nicehash.com";
-		Form1->RemotePort->Text = "3355";
-		Form1->RealIP->Text = "5.153.50.217";
-		Form1->edWorker->Text = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	;
 }
+Form1->RemoteAddr->Text = Logic->OSDProxyParams->RemoteAddress;
+Form1->RemotePort->Text = Logic->OSDProxyParams->RemotePort;
+Form1->RealIP->Text = Logic->OSDProxyParams->RemoteIP;
+Form1->edWorker->Text = Logic->OSDProxyParams->Login;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::FormShow(TObject *Sender)
@@ -130,7 +120,7 @@ Server->ServerLog = Log;
 Server->ServerLogic = Logic;
 Logic->ApplySettings(Server);
 Switcher = new TSwitcher(Form1);
-Server->Init(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
+Server->Init();
 this->LoadFromFile();
 }
 //---------------------------------------------------------------------------

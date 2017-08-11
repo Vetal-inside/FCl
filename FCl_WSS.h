@@ -11,6 +11,16 @@
 
 class TLogic;
 
+class TProxyParams
+{
+public:
+UnicodeString LocalPort;
+UnicodeString RemotePort;
+UnicodeString RemoteIP;
+UnicodeString RemoteAddress;
+UnicodeString Login;
+};
+
 class TClient: public TSslWSocketClient
 {
 public:
@@ -31,7 +41,7 @@ UnicodeString OurLogin;
 TLog* ServerLog;
 TLogic* ServerLogic;
 inline __fastcall virtual TServer(System::Classes::TComponent* AOwner) : TSslWSocketServer(AOwner) { }
-void inline __fastcall Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin);
+void inline __fastcall Init();
 void __fastcall WSocketServerClientConnect(TObject *Sender, TWSocketClient *Client, WORD Error);
 void __fastcall RemoteSessionConnected(TObject *Sender, WORD Error);
 void __fastcall RemoteDataAvailable(TObject *Sender, WORD Error);
@@ -53,12 +63,17 @@ short LogLevel;//0 - not, 1 - short, 2 - full
 short ProxyOnly;
 
 public:
+TProxyParams* OSDProxyParams;
+TProxyParams* NProxyParams;
+
 TLogic();
 TLogic(int);
 void GetSettings(int);
 void ApplySettings(TServer*);
-void SetLogLevel(short);//			MUST BE
-void SetProxyOnly(short);//			SETTED MANUALLY
+void GetNProxyParams(UnicodeString, UnicodeString, UnicodeString, UnicodeString, UnicodeString);//          MUST
+void ApplyProxyParams(TServer*, short);//0 - OSD, 1 - DD, 2 - normal					  		//          BE
+void SetLogLevel(short);																		//			SETTED
+void SetProxyOnly(short);																		//          MANUALLY
 short GetLogLevel();
 short GetProxyOnly();
 Version GetMinerVersion();
@@ -73,10 +88,6 @@ private:
 long OSDInterval;
 long DDInterval;
 long NInterval;
-UnicodeString RemotePort;
-UnicodeString RemoteIP;
-UnicodeString RemoteAddress;
-UnicodeString OurLogin;
 TServer* Serv;
 short CurrentMode;//0 - OSD, 1 - DD, 2 - normal
 UnicodeString StartTime;

@@ -9,7 +9,7 @@ if (!Application->Terminated) {
 this->RemoteSocket->Free();
 }
 
-void inline __fastcall TServer::Init(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin)
+void inline __fastcall TServer::Init()
 {
 this->LineEnd = "#13#10";
 this->Proto = "tcp";
@@ -20,12 +20,6 @@ this->Banner = "";
 this->BannerTooBusy = "";
 this->ClientClass = __classid(TClient);
 this->Addr = "0.0.0.0";
-this->LocalPort = LocalPort;
-this->Port = this->LocalPort;
-this->RemotePort = RemotePort;
-this->RemoteIP = RemoteIP;
-this->RemoteAddress = RemoteAddress;
-this->OurLogin = OurLogin;
 this->OnBgException = this->BgException;
 this->OnClientConnect = this->WSocketServerClientConnect;
 }
@@ -208,6 +202,8 @@ TLogic::TLogic()
 this->minerVersion = cm91z;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
+this->OSDProxyParams = new TProxyParams;
+this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
@@ -218,6 +214,8 @@ TLogic::TLogic(int vers)
 this->minerVersion = (Version)vers;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
+this->OSDProxyParams = new TProxyParams;
+this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
@@ -234,21 +232,42 @@ switch (this->minerVersion) {
 		this->DevFeePools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
 		this->DevFeePools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
 		this->DevFeePools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
+
+		if (this->minerVersion == cm91z) {
+			this->OSDProxyParams->LocalPort = "3333";
+			} else {
+				this->OSDProxyParams->LocalPort = "3443";
+				};
+		this->OSDProxyParams->RemotePort = "3357";
+		this->OSDProxyParams->RemoteIP = "5.153.50.217";
+		this->OSDProxyParams->RemoteAddress = "equihash.eu.nicehash.com";
+		this->OSDProxyParams->Login = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	case cm74et:
 		this->DevFeePools->resize(3);
 		this->DevFeePools->operator [](0) = "eth-eu.dwarfpool.com";							//Normal 8008
 		this->DevFeePools->operator [](1) = "us1.ethpool.org";								//Normal 3333
 		this->DevFeePools->operator [](2) = "us1.ethermine.org";								//Normal 4444
+
+		this->OSDProxyParams->LocalPort = "8008";
+		this->OSDProxyParams->RemotePort = "8008";
+		this->OSDProxyParams->RemoteIP = "87.98.182.61";
+		this->OSDProxyParams->RemoteAddress = "eth-eu.dwarfpool.com";
+		this->OSDProxyParams->Login = "0x1f31f42000054ab471a286ac75567860f5732114";
 		break;
 	case cm97x:
 		this->DevFeePools->resize(3);
 		this->DevFeePools->operator [](0) = "cryptonight.usa.nicehash.com";					//Normal 3355
 		this->DevFeePools->operator [](1) = "xmr.suprnova.cc";								//Normal 5222
 		this->DevFeePools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
+
+		this->OSDProxyParams->LocalPort = "3355";
+		this->OSDProxyParams->RemotePort = "3355";
+		this->OSDProxyParams->RemoteIP = "5.153.50.217";
+		this->OSDProxyParams->RemoteAddress = "cryptonight.eu.nicehash.com";
+		this->OSDProxyParams->Login = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
 		break;
 	}
-
 }
 
 void TLogic::ApplySettings(TServer* Server)
@@ -268,6 +287,35 @@ switch (this->minerVersion) {
 		Server->SslEnable = true;
 		break;
 	}
+}
+
+void TLogic::GetNProxyParams(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin)
+{
+this->NProxyParams->LocalPort = LocalPort;
+this->NProxyParams->RemotePort = RemotePort;
+this->NProxyParams->RemoteIP = RemoteIP;
+this->NProxyParams->RemoteAddress = RemoteAddress;
+this->NProxyParams->Login = OurLogin;
+}
+
+void TLogic::ApplyProxyParams(TServer* Serv, short type)//0 - OSD, 1 - DD, 2 - normal
+{
+if (type == 0) {
+	Serv->LocalPort = this->OSDProxyParams->LocalPort;
+	Serv->Port = Serv->LocalPort;
+	Serv->RemotePort = this->OSDProxyParams->RemotePort;
+	Serv->RemoteIP = this->OSDProxyParams->RemoteIP;
+	Serv->RemoteAddress = this->OSDProxyParams->RemoteAddress;
+	Serv->OurLogin = this->OSDProxyParams->Login;
+	};
+if (type == 2) {
+	Serv->LocalPort = this->NProxyParams->LocalPort;
+	Serv->Port = Serv->LocalPort;
+	Serv->RemotePort = this->NProxyParams->RemotePort;
+	Serv->RemoteIP = this->NProxyParams->RemoteIP;
+	Serv->RemoteAddress = this->NProxyParams->RemoteAddress;
+	Serv->OurLogin = this->NProxyParams->Login;
+	};
 }
 
 void TLogic::SetLogLevel(short newvalue)
@@ -305,10 +353,11 @@ int TLogic::GetPoolsCount()
 return (int)this->DevFeePools->size();
 }
 
-
 TLogic::~TLogic()
 {
 delete[] this->DevFeePools;
+delete this->OSDProxyParams;
+delete this->NProxyParams;
 }
 
 void TSwitcher::Init(short OSDonationTime,short DevDonationTime,TServer* Serv,UnicodeString StartTime)
@@ -318,12 +367,8 @@ this->OSDInterval = OSDonationTime*60*60*1000;
 this->DDInterval = DevDonationTime*60*60*1000;
 this->NInterval = (24*60*60*1000 - this->OSDInterval - this->DDInterval);
 this->OnTimer = this->Switch;
-this->Serv = Serv;
-this->RemotePort = this->Serv->RemotePort;
-this->RemoteIP = this->Serv->RemoteIP;
-this->RemoteAddress = this->Serv->RemoteAddress;
-this->OurLogin = this->Serv->OurLogin;
 this->StartTime = StartTime;
+this->Serv = Serv;
 }
 
 void __fastcall TSwitcher::Switch(TObject *Sender)
@@ -355,32 +400,10 @@ this->Serv->Listen();
 
 void TSwitcher::SetOSD(long NewInterval)
 {
-UnicodeString addr,port,ip,worker;
 this->CurrentMode = 0;
 this->Interval = NewInterval;
 this->Serv->ServerLogic->SetProxyOnly(false);
-switch (this->Serv->ServerLogic->GetMinerVersion()) {
-	case 0 :
-	case 1 :
-		addr = "equihash.eu.nicehash.com";
-		port = "3357";
-		ip = "5.153.50.217";
-		worker = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
-		break;
-	case 2 :
-		addr = "eth-eu.dwarfpool.com";
-		port = "8008";
-		ip = "87.98.182.61";
-		worker = "0x1f31f42000054ab471a286ac75567860f5732114";
-		break;
-	case 3 :
-		addr = "cryptonight.eu.nicehash.com";
-		port = "3355";
-		ip = "5.153.50.217";
-		worker = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
-		break;
-	}
-this->Serv->Init(this->Serv->LocalPort,port,ip,addr,worker);
+this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
 }
 
 void TSwitcher::SetDD(long NewInterval)
@@ -395,7 +418,7 @@ void TSwitcher::SetN(long NewInterval)
 this->CurrentMode = 2;
 this->Interval = NewInterval;
 this->Serv->ServerLogic->SetProxyOnly(false);
-this->Serv->Init(this->Serv->LocalPort,this->RemotePort, this->RemoteIP, this->RemoteAddress, this->OurLogin);
+this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
 }
 
 void TSwitcher::Start()
