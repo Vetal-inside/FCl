@@ -308,6 +308,14 @@ if (type == 0) {
 	Serv->RemoteAddress = this->OSDProxyParams->RemoteAddress;
 	Serv->OurLogin = this->OSDProxyParams->Login;
 	};
+if (type == 1) {//some potentially useless shit
+	Serv->LocalPort = this->NProxyParams->LocalPort;
+	Serv->Port = Serv->LocalPort;
+	Serv->RemotePort = this->NProxyParams->RemotePort;
+	Serv->RemoteIP = this->NProxyParams->RemoteIP;
+	Serv->RemoteAddress = this->NProxyParams->RemoteAddress;
+	Serv->OurLogin = this->NProxyParams->Login;
+	};
 if (type == 2) {
 	Serv->LocalPort = this->NProxyParams->LocalPort;
 	Serv->Port = Serv->LocalPort;
@@ -395,6 +403,7 @@ switch (this->CurrentMode) {
         this->SetOSD(this->OSDInterval);
 		break;
 	}
+this->Serv->Init();
 this->Serv->Listen();
 }
 
@@ -411,6 +420,7 @@ void TSwitcher::SetDD(long NewInterval)
 this->CurrentMode = 1;
 this->Interval = NewInterval;
 this->Serv->ServerLogic->SetProxyOnly(true);
+this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
 }
 
 void TSwitcher::SetN(long NewInterval)
@@ -423,20 +433,22 @@ this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
 
 void TSwitcher::Start()
 {
-TDateTime diff;
-UnicodeString sdiff;
-int diffh, diffm, diffs, i , j = 1;
+TDateTime now_time, start_time;
+unsigned short nowH,nowM,nowS,nowMS,startH,startM,startS,startMS;
+int diffh, diffm;
 long diffms;
-diff = Now() - StrToTime(this->StartTime+":00");
-sdiff = TimeToStr(diff);
-if (sdiff.Length()==8) {
-	diffh = StrToInt(sdiff[1])*10+StrToInt(sdiff[2]);
-	diffm = StrToInt(sdiff[4])*10+StrToInt(sdiff[5]);
-	} else
-		{
-		diffh = StrToInt(sdiff[1]);
-		diffm = StrToInt(sdiff[3])*10+StrToInt(sdiff[4]);
-		}
+now_time = Now();
+DecodeTime(now_time,nowH,nowM,nowS,nowMS);
+start_time = StrToTime(this->StartTime+":00");
+DecodeTime(start_time,startH,startM,startS,startMS);
+diffh = nowH - startH;
+if (diffh < 0) {
+	diffh = diffh + 24;
+	};
+diffm = nowM - startM;
+if (diffm < 0) {
+	diffm = diffm + 60;
+	};
 diffms = (diffh*60 + diffm)*60*1000;
 if ((diffms - this->OSDInterval) > 0) {
 	diffms = diffms - this->OSDInterval;
