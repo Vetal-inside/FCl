@@ -14,7 +14,7 @@ class TLogic;
 class TProxyParams
 {
 public:
-UnicodeString LocalPort;
+std::vector<UnicodeString>* LocalPorts;
 UnicodeString RemotePort;
 UnicodeString RemoteIP;
 UnicodeString RemoteAddress;
@@ -65,13 +65,14 @@ short ProxyOnly;
 public:
 TProxyParams* OSDProxyParams;
 TProxyParams* NProxyParams;
+short countServers;
 
 TLogic();
 TLogic(int);
 void GetSettings(int);
-void ApplySettings(TServer*);
-void GetNProxyParams(UnicodeString, UnicodeString, UnicodeString, UnicodeString, UnicodeString);//          MUST
-void ApplyProxyParams(TServer*, short);//0 - OSD, 1 - DD, 2 - normal					  		//          BE
+void ApplySettings(std::vector<TServer*>*);
+void GetNProxyParams(std::vector<UnicodeString>*, UnicodeString, UnicodeString, UnicodeString, UnicodeString);//          MUST
+void ApplyProxyParams(std::vector<TServer*>*, short);//0 - OSD, 1 - DD, 2 - normal					  		//          BE
 void SetLogLevel(short);																		//			SETTED
 void SetProxyOnly(short);																		//          MANUALLY
 short GetLogLevel();
@@ -88,9 +89,11 @@ private:
 long OSDInterval;
 long DDInterval;
 long NInterval;
-TServer* Serv;
+std::vector<TServer*>* Servs;
+TLogic* ServsLogic;
 short CurrentMode;//0 - OSD, 1 - DD, 2 - normal
 UnicodeString StartTime;
+
 
 void SetOSD(long);
 void SetDD(long);
@@ -99,7 +102,7 @@ void SetN(long);
 public:
 inline __fastcall virtual TSwitcher(System::Classes::TComponent* AOwner) : TTimer(AOwner) { }
 void __fastcall Switch(TObject *Sender);
-void Init(short,short,TServer*,UnicodeString);
+void Init(short,short,std::vector<TServer*>*,TLogic*,UnicodeString);
 void Start();
 void Stop();
 

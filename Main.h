@@ -19,7 +19,6 @@ __published:	// IDE-managed Components
 	TLabel *Label3;
 	TEdit *RemotePort;
 	TButton *ListenBtn;
-	TEdit *LocalPort;
 	TEdit *edWorker;
 	TEdit *RemoteAddr;
 	TEdit *RealIP;
@@ -36,6 +35,7 @@ __published:	// IDE-managed Components
 	TLabel *Label8;
 	TEdit *StartTime;
 	TLabel *Label10;
+	TMemo *LocalPorts;
 	void __fastcall ListenBtnClick(TObject *Sender);
 	void __fastcall FormCanResize(TObject *Sender, int &NewWidth, int &NewHeight, bool &Resize);
 	void __fastcall ComboBox1Change(TObject *Sender);

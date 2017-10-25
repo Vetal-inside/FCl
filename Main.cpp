@@ -19,11 +19,12 @@ TForm1 *Form1;
 TForm2 *Form2;
 TForm3 *Form3;
 TLog* Log;
-TServer* Server;
+std::vector<TServer*>* Servers;
 TSslContext* SslContext;
 TLogic* Logic;
 TSwitcher* Switcher;
 std::vector<TNetworkConfig>* NetworkConfigs;
+std::vector<UnicodeString>* VectLocalPorts;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
@@ -33,17 +34,26 @@ this->EnableLocalPort = false;
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
+int i,j;
 if (ListenBtn->Tag == 0) {
-	Server->Init();
-	Server->SetLogLevel(Form1->ComboBox2->ItemIndex);
+	for (int i = 0; i < Logic->countServers; i++) {
+		Servers->operator [](i)->Init();
+		Servers->operator [](i)->SetLogLevel(Form1->ComboBox2->ItemIndex);
+		};
 	Logic->GetSettings(Form1->ComboBox1->ItemIndex);
-	Logic->ApplySettings(Server);
-	Logic->GetNProxyParams(this->LocalPort->Text,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
-	Logic->ApplyProxyParams(Server,2);
-	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Server,Form1->StartTime->Text);
+	Logic->ApplySettings(Servers);
+	for (i = 0; i < Form1->LocalPorts->Lines->Count; i++) {
+		VectLocalPorts->resize(VectLocalPorts->size() + 1);
+		VectLocalPorts->operator [](i) = Form1->LocalPorts->Lines->operator [](i);
+		}
+	Logic->GetNProxyParams(VectLocalPorts,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
+	Logic->ApplyProxyParams(Servers,2);
+	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Servers,Logic,Form1->StartTime->Text);
 	Switcher->Start();
-	Server->Listen();
-	LocalPort->Enabled = false;
+	for (int i = 0; i < Logic->countServers; i++) {
+		Servers->operator [](i)->Listen();
+		};
+	LocalPorts->Enabled = false;
 	RemotePort->Enabled = false;
 	RemoteAddr->Enabled = false;
 	RealIP->Enabled = false;
@@ -58,12 +68,14 @@ if (ListenBtn->Tag == 0) {
 	ListenBtn->Caption = "Cancel";
 	ListenBtn->Tag = 1;
 	}else {
-		for (int i = 0; i < Server->ClientCount; i++) {
-			Server->Client[i]->Close();
-			}
-		Server->Close();
+		for (i = 0; i < Logic->countServers; i++){
+			for (j = 0; j < Servers->operator [](i)->ClientCount; j++) {
+				Servers->operator [](i)->Client[j]->Close();
+				};
+			Servers->operator [](i)->Close();
+			};
 		Switcher->Stop();
-		Form1->LocalPort->Enabled = this->EnableLocalPort;
+		Form1->LocalPorts->Enabled = this->EnableLocalPort;
 		Form1->RemotePort->Enabled = true;
 		Form1->RemoteAddr->Enabled = true;
 		Form1->RealIP->Enabled = true;
@@ -93,21 +105,10 @@ Form3->LoadNetworkSettings();
 Form3->FillAdaptersData();
 Form3->FillHostsData();
 Form3->FillNetworkData();
-switch (Form1->ComboBox1->ItemIndex) {
-	case 0 :
-		Form1->LocalPort->Text = "3333";
-		break;
-	case 1 :
-		Form1->LocalPort->Text = "3443";
-		break;
-	case 2 :
-		Form1->LocalPort->Text = "8008";
-		break;
-	case 3 :
-		Form1->LocalPort->Text = "3355";
-		break;
-	;
-}
+Form1->LocalPorts->Lines->Clear();
+for (unsigned int i = 0; i < Logic->OSDProxyParams->LocalPorts->size(); i++) {
+	Form1->LocalPorts->Lines->Add(Logic->OSDProxyParams->LocalPorts->operator [](i));
+	}
 Form1->RemoteAddr->Text = Logic->OSDProxyParams->RemoteAddress;
 Form1->RemotePort->Text = Logic->OSDProxyParams->RemotePort;
 Form1->RealIP->Text = Logic->OSDProxyParams->RemoteIP;
@@ -119,14 +120,21 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 Logic->GetSettings(Form1->ComboBox1->ItemIndex);
 NetworkConfigs = new std::vector<TNetworkConfig>(0);
+VectLocalPorts = new std::vector<UnicodeString>(0);
 SslContext = new TSslContext((TComponent*)Form1);
-Server = new TServer((TComponent*)Form1);
-Server->SslContext = SslContext;
-Server->ServerLog = Log;
-Server->ServerLogic = Logic;
-Logic->ApplySettings(Server);
+Servers = new std::vector<TServer*>;
+Servers->resize(Logic->countServers);
+for (int i = 0; i < Logic->countServers; i++) {
+	Servers->operator [](i) = new TServer((TComponent*)Form1);
+	Servers->operator [](i)->SslContext = SslContext;
+	Servers->operator [](i)->ServerLog = Log;
+	Servers->operator [](i)->ServerLogic = Logic;
+	};
+Logic->ApplySettings(Servers);
 Switcher = new TSwitcher(Form1);
-Server->Init();
+for (int i = 0; i < Logic->countServers; i++) {
+	Servers->operator [](i)->Init();
+	};
 this->LoadFromFile();
 }
 //---------------------------------------------------------------------------
@@ -139,6 +147,7 @@ Form3->Show();
 void __fastcall TForm1::LoadFromFile()
 {
 bool autostart = false;
+bool firstlocalport = true;
 char* buf = "";
 UnicodeString bufstr;
 ifstream fin("config.txt");
@@ -148,7 +157,11 @@ while (fin.is_open()&&!fin.eof()){
 	if (bufstr == "-localport") {
 		fin >> (char*)buf;
 		bufstr = buf;
-		Form1->LocalPort->Text = bufstr;
+		if (firstlocalport) {
+			Form1->LocalPorts->Lines->Clear();
+			firstlocalport = false;
+			};
+		Form1->LocalPorts->Lines->Add(bufstr);
 		continue;
 		}
 	if (bufstr == "-domainaddress") {
@@ -197,7 +210,7 @@ while (fin.is_open()&&!fin.eof()){
 		bufstr = buf;
 		if (bufstr == "1") {
 			this->EnableLocalPort = true;
-			this->LocalPort->Enabled = true;
+			this->LocalPorts->Enabled = true;
 			}
 		continue;
 		}
@@ -205,7 +218,7 @@ while (fin.is_open()&&!fin.eof()){
 		fin >> (char*)buf;
 		bufstr = buf;
 		if (bufstr == "1") {
-			Server->ServerLogic->SetProxyOnly(true);
+			Logic->SetProxyOnly(true);
 			}
 		continue;
 		}

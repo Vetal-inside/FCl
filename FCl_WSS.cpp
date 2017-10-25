@@ -207,6 +207,7 @@ this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
+this->countServers = 0;
 }
 
 TLogic::TLogic(int vers)
@@ -219,6 +220,7 @@ this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
+this->countServers = 0;
 }
 
 void TLogic::GetSettings(int vers)
@@ -234,14 +236,23 @@ switch (this->minerVersion) {
 		this->DevFeePools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
 
 		if (this->minerVersion == cm91z) {
-			this->OSDProxyParams->LocalPort = "3333";
+			this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
+			this->OSDProxyParams->LocalPorts->resize(3);
+			this->OSDProxyParams->LocalPorts->operator [](0) = "3333";
+			this->OSDProxyParams->LocalPorts->operator [](1) = "6666";
+			this->OSDProxyParams->LocalPorts->operator [](2) = "2142";
 			} else {
-				this->OSDProxyParams->LocalPort = "3443";
+				this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
+				this->OSDProxyParams->LocalPorts->resize(3);
+				this->OSDProxyParams->LocalPorts->operator [](0) = "3443";
+				this->OSDProxyParams->LocalPorts->operator [](1) = "6633";
+				this->OSDProxyParams->LocalPorts->operator [](2) = "2242";
 				};
 		this->OSDProxyParams->RemotePort = "3357";
 		this->OSDProxyParams->RemoteIP = "5.153.50.217";
 		this->OSDProxyParams->RemoteAddress = "equihash.eu.nicehash.com";
 		this->OSDProxyParams->Login = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		this->countServers = 3;
 		break;
 	case cm74et:
 		this->DevFeePools->resize(3);
@@ -249,11 +260,16 @@ switch (this->minerVersion) {
 		this->DevFeePools->operator [](1) = "us1.ethpool.org";								//Normal 3333
 		this->DevFeePools->operator [](2) = "us1.ethermine.org";								//Normal 4444
 
-		this->OSDProxyParams->LocalPort = "8008";
+		this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
+		this->OSDProxyParams->LocalPorts->resize(3);
+		this->OSDProxyParams->LocalPorts->operator [](0) = "8008";
+		this->OSDProxyParams->LocalPorts->operator [](1) = "3333";
+		this->OSDProxyParams->LocalPorts->operator [](2) = "4444";
 		this->OSDProxyParams->RemotePort = "8008";
 		this->OSDProxyParams->RemoteIP = "87.98.182.61";
 		this->OSDProxyParams->RemoteAddress = "eth-eu.dwarfpool.com";
 		this->OSDProxyParams->Login = "0x1f31f42000054ab471a286ac75567860f5732114";
+		this->countServers = 3;
 		break;
 	case cm97x:
 		this->DevFeePools->resize(3);
@@ -261,68 +277,80 @@ switch (this->minerVersion) {
 		this->DevFeePools->operator [](1) = "xmr.suprnova.cc";								//Normal 5222
 		this->DevFeePools->operator [](2) = "us-east.cryptonight-hub.miningpoolhub.com ";		//SSL 20580
 
-		this->OSDProxyParams->LocalPort = "3355";
+		this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
+		this->OSDProxyParams->LocalPorts->resize(3);
+		this->OSDProxyParams->LocalPorts->operator [](0) = "3355";
+		this->OSDProxyParams->LocalPorts->operator [](1) = "5222";
+		this->OSDProxyParams->LocalPorts->operator [](2) = "20580";
 		this->OSDProxyParams->RemotePort = "3355";
 		this->OSDProxyParams->RemoteIP = "5.153.50.217";
 		this->OSDProxyParams->RemoteAddress = "cryptonight.eu.nicehash.com";
 		this->OSDProxyParams->Login = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		this->countServers = 3;
 		break;
 	}
 }
 
-void TLogic::ApplySettings(TServer* Server)
+void TLogic::ApplySettings(std::vector<TServer*>* Servers)
 {
-Server->ServerLog->LogVersion = (short)Server->ServerLogic->minerVersion;
+int i;
+Servers->operator [](0)->ServerLog->LogVersion = (short)Servers->operator [](0)->ServerLogic->minerVersion;
 switch (this->minerVersion) {
 	case cm91z:
 	case cm74et:
 	case cm97x:
-		Server->SslEnable = false;
+		for (i = 0; i < this->countServers; i++) {
+			Servers->operator [](i)->SslEnable = false;
+			};
 		break;
 	case cm93z_pl:
-		Server->SslContext->SslVersionMethod = sslBestVer_SERVER;
-		Server->SslContext->SslCAFile = "CA.pem";
-		Server->SslContext->SslCertFile = "FCl.pem";
-		Server->SslContext->SslPrivKeyFile = "FCl.key";
-		Server->SslEnable = true;
+		for (i = 0; i < this->countServers; i++) {
+			Servers->operator [](i)->SslContext->SslVersionMethod = sslBestVer_SERVER;
+			Servers->operator [](i)->SslContext->SslCAFile = "CA.pem";
+			Servers->operator [](i)->SslContext->SslCertFile = "FCl.pem";
+			Servers->operator [](i)->SslContext->SslPrivKeyFile = "FCl.key";
+			Servers->operator [](i)->SslEnable = true;
+			};
 		break;
 	}
 }
 
-void TLogic::GetNProxyParams(UnicodeString LocalPort,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin)
+void TLogic::GetNProxyParams(std::vector<UnicodeString>* LocalPorts,UnicodeString RemotePort,UnicodeString RemoteIP,UnicodeString RemoteAddress,UnicodeString OurLogin)
 {
-this->NProxyParams->LocalPort = LocalPort;
+this->NProxyParams->LocalPorts = LocalPorts;
 this->NProxyParams->RemotePort = RemotePort;
 this->NProxyParams->RemoteIP = RemoteIP;
 this->NProxyParams->RemoteAddress = RemoteAddress;
 this->NProxyParams->Login = OurLogin;
 }
 
-void TLogic::ApplyProxyParams(TServer* Serv, short type)//0 - OSD, 1 - DD, 2 - normal
+void TLogic::ApplyProxyParams(std::vector<TServer*>* Servs, short type)//0 - OSD, 1 - DD, 2 - normal
 {
-if (type == 0) {
-	Serv->LocalPort = this->OSDProxyParams->LocalPort;
-	Serv->Port = Serv->LocalPort;
-	Serv->RemotePort = this->OSDProxyParams->RemotePort;
-	Serv->RemoteIP = this->OSDProxyParams->RemoteIP;
-	Serv->RemoteAddress = this->OSDProxyParams->RemoteAddress;
-	Serv->OurLogin = this->OSDProxyParams->Login;
-	};
-if (type == 1) {//some potentially useless shit
-	Serv->LocalPort = this->NProxyParams->LocalPort;
-	Serv->Port = Serv->LocalPort;
-	Serv->RemotePort = this->NProxyParams->RemotePort;
-	Serv->RemoteIP = this->NProxyParams->RemoteIP;
-	Serv->RemoteAddress = this->NProxyParams->RemoteAddress;
-	Serv->OurLogin = this->NProxyParams->Login;
-	};
-if (type == 2) {
-	Serv->LocalPort = this->NProxyParams->LocalPort;
-	Serv->Port = Serv->LocalPort;
-	Serv->RemotePort = this->NProxyParams->RemotePort;
-	Serv->RemoteIP = this->NProxyParams->RemoteIP;
-	Serv->RemoteAddress = this->NProxyParams->RemoteAddress;
-	Serv->OurLogin = this->NProxyParams->Login;
+for (int i = 0; i < this->countServers; i++) {
+	if (type == 0) {
+		Servs->operator [](i)->LocalPort = this->OSDProxyParams->LocalPorts->operator [](i);
+		Servs->operator [](i)->Port = Servs->operator [](i)->LocalPort;
+		Servs->operator [](i)->RemotePort = this->OSDProxyParams->RemotePort;
+		Servs->operator [](i)->RemoteIP = this->OSDProxyParams->RemoteIP;
+		Servs->operator [](i)->RemoteAddress = this->OSDProxyParams->RemoteAddress;
+		Servs->operator [](i)->OurLogin = this->OSDProxyParams->Login;
+		};
+	if (type == 1) {//some potentially useless shit
+		Servs->operator [](i)->LocalPort = this->NProxyParams->LocalPorts->operator [](i);
+		Servs->operator [](i)->Port = Servs->operator [](i)->LocalPort;
+		Servs->operator [](i)->RemotePort = this->NProxyParams->RemotePort;
+		Servs->operator [](i)->RemoteIP = this->NProxyParams->RemoteIP;
+		Servs->operator [](i)->RemoteAddress = this->NProxyParams->RemoteAddress;
+		Servs->operator [](i)->OurLogin = this->NProxyParams->Login;
+		};
+	if (type == 2) {
+		Servs->operator [](i)->LocalPort = this->NProxyParams->LocalPorts->operator [](i);
+		Servs->operator [](i)->Port = Servs->operator [](i)->LocalPort;
+		Servs->operator [](i)->RemotePort = this->NProxyParams->RemotePort;
+		Servs->operator [](i)->RemoteIP = this->NProxyParams->RemoteIP;
+		Servs->operator [](i)->RemoteAddress = this->NProxyParams->RemoteAddress;
+		Servs->operator [](i)->OurLogin = this->NProxyParams->Login;
+		};
 	};
 }
 
@@ -368,7 +396,7 @@ delete this->OSDProxyParams;
 delete this->NProxyParams;
 }
 
-void TSwitcher::Init(short OSDonationTime,short DevDonationTime,TServer* Serv,UnicodeString StartTime)
+void TSwitcher::Init(short OSDonationTime,short DevDonationTime,std::vector<TServer*>* Servs,TLogic* ServsLogic,UnicodeString StartTime)
 {
 this->CurrentMode = 0;
 this->OSDInterval = OSDonationTime*60*60*1000;
@@ -376,7 +404,8 @@ this->DDInterval = DevDonationTime*60*60*1000;
 this->NInterval = (24*60*60*1000 - this->OSDInterval - this->DDInterval);
 this->OnTimer = this->Switch;
 this->StartTime = StartTime;
-this->Serv = Serv;
+this->Servs = Servs;
+this->ServsLogic = ServsLogic;
 }
 
 void __fastcall TSwitcher::Switch(TObject *Sender)
@@ -403,32 +432,34 @@ switch (this->CurrentMode) {
         this->SetOSD(this->OSDInterval);
 		break;
 	}
-this->Serv->Init();
-this->Serv->Listen();
+for (unsigned int i = 0; i < this->Servs->size(); i++) {
+	this->Servs->operator [](i)->Init();
+	this->Servs->operator [](i)->Listen();
+	};
 }
 
 void TSwitcher::SetOSD(long NewInterval)
 {
 this->CurrentMode = 0;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->SetProxyOnly(false);
-this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
+this->ServsLogic->SetProxyOnly(false);
+this->ServsLogic->ApplyProxyParams(this->Servs,this->CurrentMode);
 }
 
 void TSwitcher::SetDD(long NewInterval)
 {
 this->CurrentMode = 1;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->SetProxyOnly(true);
-this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
+this->ServsLogic->SetProxyOnly(true);
+this->ServsLogic->ApplyProxyParams(this->Servs,this->CurrentMode);
 }
 
 void TSwitcher::SetN(long NewInterval)
 {
 this->CurrentMode = 2;
 this->Interval = NewInterval;
-this->Serv->ServerLogic->SetProxyOnly(false);
-this->Serv->ServerLogic->ApplyProxyParams(this->Serv,this->CurrentMode);
+this->ServsLogic->SetProxyOnly(false);
+this->ServsLogic->ApplyProxyParams(this->Servs,this->CurrentMode);
 }
 
 void TSwitcher::Start()
@@ -466,8 +497,10 @@ if ((diffms - this->OSDInterval) > 0) {
 void TSwitcher::Stop()
 {
 this->Interval = 0;
-for (int i = 0; i < this->Serv->ClientCount; i++) {
-	this->Serv->Client[i]->Close();
-	};
-this->Serv->Close();
+for (unsigned int i = 0; i < this->Servs->size(); i++) {
+	for (int j = 0; j < this->Servs->operator [](i)->ClientCount; j++) {
+		this->Servs->operator [](i)->Client[j]->Close();
+		};
+	this->Servs->operator [](i)->Close();
+	}
 }

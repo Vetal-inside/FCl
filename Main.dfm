@@ -69,7 +69,7 @@ object Form1: TForm1
   object Label9: TLabel
     Left = 768
     Top = 57
-    Width = 161
+    Width = 152
     Height = 13
     Caption = 'Donation to miner dev - 0 hours'
   end
@@ -103,15 +103,6 @@ object Form1: TForm1
     Caption = 'Listen'
     TabOrder = 1
     OnClick = ListenBtnClick
-  end
-  object LocalPort: TEdit
-    Left = 16
-    Top = 24
-    Width = 75
-    Height = 21
-    Enabled = False
-    TabOrder = 2
-    Text = '3333'
   end
   object edWorker: TEdit
     Left = 120
@@ -204,5 +195,16 @@ object Form1: TForm1
     Height = 21
     TabOrder = 11
     Text = '00:00'
+  end
+  object LocalPorts: TMemo
+    Left = 16
+    Top = 24
+    Width = 75
+    Height = 46
+    Lines.Strings = (
+      '3333'
+      '6666'
+      '2142')
+    TabOrder = 2
   end
 end
