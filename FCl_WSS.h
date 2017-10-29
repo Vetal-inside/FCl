@@ -21,6 +21,14 @@ UnicodeString RemoteAddress;
 UnicodeString Login;
 };
 
+class TCertData
+{
+public:
+UnicodeString CACert;
+UnicodeString Cert;
+UnicodeString Key;
+};
+
 class TClient: public TSslWSocketClient
 {
 public:
@@ -59,6 +67,7 @@ class TLogic
 private:
 Version minerVersion;
 std::vector<UnicodeString>* DevFeePools;
+std::vector<TCertData>* DevFeeCers;
 short LogLevel;//0 - not, 1 - short, 2 - full
 short ProxyOnly;
 

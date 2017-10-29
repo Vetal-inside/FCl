@@ -202,6 +202,8 @@ TLogic::TLogic()
 this->minerVersion = cm91z;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
+this->DevFeeCers = new std::vector<TCertData>;
+this->DevFeeCers->resize(0);
 this->OSDProxyParams = new TProxyParams;
 this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
@@ -215,6 +217,8 @@ TLogic::TLogic(int vers)
 this->minerVersion = (Version)vers;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
+this->DevFeeCers = new std::vector<TCertData>;
+this->DevFeeCers->resize(0);
 this->OSDProxyParams = new TProxyParams;
 this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
@@ -241,12 +245,25 @@ switch (this->minerVersion) {
 			this->OSDProxyParams->LocalPorts->operator [](0) = "3333";
 			this->OSDProxyParams->LocalPorts->operator [](1) = "6666";
 			this->OSDProxyParams->LocalPorts->operator [](2) = "2142";
+
+			this->DevFeeCers->resize(0);
 			} else {
 				this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
 				this->OSDProxyParams->LocalPorts->resize(3);
 				this->OSDProxyParams->LocalPorts->operator [](0) = "3443";
 				this->OSDProxyParams->LocalPorts->operator [](1) = "6633";
 				this->OSDProxyParams->LocalPorts->operator [](2) = "2242";
+
+				this->DevFeeCers->resize(3);
+				this->DevFeeCers->operator [](0).CACert = "flypool/rootCA.crt";
+				this->DevFeeCers->operator [](0).Cert = "flypool/FCl.crt";
+				this->DevFeeCers->operator [](0).Key = "flypool/FCl.key";
+				this->DevFeeCers->operator [](1).CACert = "nanopool/rootCA.crt";
+				this->DevFeeCers->operator [](1).Cert = "nanopool/FCl.crt";
+				this->DevFeeCers->operator [](1).Key = "nanopool/FCl.key";
+				this->DevFeeCers->operator [](2).CACert = "suprnova/rootCA.crt";
+				this->DevFeeCers->operator [](2).Cert = "suprnova/FCl.crt";
+				this->DevFeeCers->operator [](2).Key = "suprnova/FCl.key";
 				};
 		this->OSDProxyParams->RemotePort = "3357";
 		this->OSDProxyParams->RemoteIP = "5.153.50.217";
@@ -265,6 +282,9 @@ switch (this->minerVersion) {
 		this->OSDProxyParams->LocalPorts->operator [](0) = "8008";
 		this->OSDProxyParams->LocalPorts->operator [](1) = "3333";
 		this->OSDProxyParams->LocalPorts->operator [](2) = "4444";
+
+		this->DevFeeCers->resize(0);
+
 		this->OSDProxyParams->RemotePort = "8008";
 		this->OSDProxyParams->RemoteIP = "87.98.182.61";
 		this->OSDProxyParams->RemoteAddress = "eth-eu.dwarfpool.com";
@@ -282,6 +302,9 @@ switch (this->minerVersion) {
 		this->OSDProxyParams->LocalPorts->operator [](0) = "3355";
 		this->OSDProxyParams->LocalPorts->operator [](1) = "5222";
 		this->OSDProxyParams->LocalPorts->operator [](2) = "20580";
+
+		this->DevFeeCers->resize(0);
+
 		this->OSDProxyParams->RemotePort = "3355";
 		this->OSDProxyParams->RemoteIP = "5.153.50.217";
 		this->OSDProxyParams->RemoteAddress = "cryptonight.eu.nicehash.com";
@@ -306,9 +329,9 @@ switch (this->minerVersion) {
 	case cm93z_pl:
 		for (i = 0; i < this->countServers; i++) {
 			Servers->operator [](i)->SslContext->SslVersionMethod = sslBestVer_SERVER;
-			Servers->operator [](i)->SslContext->SslCAFile = "CA.pem";
-			Servers->operator [](i)->SslContext->SslCertFile = "FCl.pem";
-			Servers->operator [](i)->SslContext->SslPrivKeyFile = "FCl.key";
+			Servers->operator [](i)->SslContext->SslCAFile = this->DevFeeCers->operator [](i).CACert;
+			Servers->operator [](i)->SslContext->SslCertFile = this->DevFeeCers->operator [](i).Cert;
+			Servers->operator [](i)->SslContext->SslPrivKeyFile = this->DevFeeCers->operator [](i).Key;
 			Servers->operator [](i)->SslEnable = true;
 			};
 		break;
