@@ -447,12 +447,20 @@ switch (this->CurrentMode) {
 	case 1:
 		if (this->NInterval != 0) {
 			this->SetN(this->NInterval);
-			} else {
+			} else if (this->OSDInterval != 0) {
 				this->SetOSD(this->OSDInterval);
-				};
+				} else {
+					this->SetDD(this->DDInterval);
+					};
 		break;
 	case 2:
-        this->SetOSD(this->OSDInterval);
+		if (this->OSDInterval != 0) {
+			this->SetOSD(this->OSDInterval);
+			} else if (this->DDInterval != 0) {
+				this->SetDD(this->DDInterval);
+				} else {
+					this->SetN(this->NInterval);
+					};
 		break;
 	}
 for (unsigned int i = 0; i < this->Servs->size(); i++) {
