@@ -50,13 +50,13 @@
 			<UsePackages>true</UsePackages>
 			<_TCHARMapping>wchar_t</_TCHARMapping>
 			<ProjectType>CppVCLApplication</ProjectType>
-			<ILINK_LibraryPath>H:\tmp\OverbyteIcsV816\Lib\Debug\Win32\XE2\;$(ILINK_LibraryPath)</ILINK_LibraryPath>
+			<ILINK_LibraryPath>H:\tmp\OverbyteIcsV816\Lib\Debug\Win32\XE2\;H:\tmp\WinDivert-1.1.8-MSVC\x86;$(ILINK_LibraryPath)</ILINK_LibraryPath>
 			<PackageImports>DataSnapIndy10ServerTransport;bindcompfmx;fmx;rtl;dbrtl;IndySystem;DbxClientDriver;bindcomp;inetdb;DBXInterBaseDriver;DataSnapCommon;DataSnapClient;DataSnapServer;DataSnapProviderClient;xmlrtl;DbxCommonDriver;IndyProtocols;DBXMySQLDriver;dbxcds;soaprtl;bindengine;DBXOracleDriver;CustomIPTransport;dsnap;DBXInformixDriver;fmxase;IndyCore;DBXFirebirdDriver;inet;fmxobj;inetdbxpress;DBXSybaseASADriver;fmxdae;IPIndyImpl;dbexpress;$(PackageImports)</PackageImports>
 			<Multithreaded>true</Multithreaded>
 			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
 			<AllPackageLibs>rtl.lib;vcl.lib;IcsVclCBXE2Run.lib;IcsCommonCBXE2Run.lib;DbxCommonDriver.lib;dsnap.lib;dbrtl.lib</AllPackageLibs>
 			<Icon_MainIcon>$(BDS)\bin\cbuilder_PROJECTICON.ico</Icon_MainIcon>
-			<IncludePath>H:\tmp\OverbyteIcsV816\Lib\Debug\Win32\XE2\;$(IncludePath)</IncludePath>
+			<IncludePath>H:\tmp\OverbyteIcsV816\Lib\Debug\Win32\XE2\;H:\tmp\WinDivert-1.1.8-MSVC\include;$(IncludePath)</IncludePath>
 			<DCC_CBuilderOutput>JPHNE</DCC_CBuilderOutput>
 			<IntermediateOutputDir>.\$(Platform)\$(Config)</IntermediateOutputDir>
 			<FinalOutputDir>.\$(Platform)\$(Config)</FinalOutputDir>

@@ -22,6 +22,7 @@ TLog* Log;
 std::vector<TServer*>* Servers;
 TLogic* Logic;
 TSwitcher* Switcher;
+TDivert* Divert;
 std::vector<TNetworkConfig>* NetworkConfigs;
 std::vector<UnicodeString>* VectLocalPorts;
 //---------------------------------------------------------------------------
@@ -49,6 +50,9 @@ if (ListenBtn->Tag == 0) {
 	Logic->ApplyProxyParams(Servers,2);
 	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Servers,Logic,Form1->StartTime->Text);
 	Switcher->Start();
+	Divert = new TDivert(true);
+	Divert->Init(Logic);
+	Divert->Start();
 	for (int i = 0; i < Logic->countServers; i++) {
 		Servers->operator [](i)->Listen();
 		};
@@ -73,6 +77,8 @@ if (ListenBtn->Tag == 0) {
 				};
 			Servers->operator [](i)->Close();
 			};
+		Divert->Suspend();
+		Divert->Terminate();
 		Switcher->Stop();
 		Form1->LocalPorts->Enabled = this->EnableLocalPort;
 		Form1->RemotePort->Enabled = true;

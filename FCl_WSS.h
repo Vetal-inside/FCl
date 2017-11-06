@@ -9,6 +9,11 @@
 #include <DBXJSON.hpp>
 #include <Vcl.ExtCtrls.hpp>
 
+#include "windivert.h"
+#define MAXBUF 0xFFFF
+#define WINDIVERT_HELPER_NO_REPLACE 2048
+#pragma comment(lib, "WinDivert_omf.lib")
+
 class TLogic;
 
 class TProxyParams
@@ -103,7 +108,6 @@ TLogic* ServsLogic;
 short CurrentMode;//0 - OSD, 1 - DD, 2 - normal
 UnicodeString StartTime;
 
-
 void SetOSD(long);
 void SetDD(long);
 void SetN(long);
@@ -114,6 +118,18 @@ void __fastcall Switch(TObject *Sender);
 void Init(short,short,std::vector<TServer*>*,TLogic*,UnicodeString);
 void Start();
 void Stop();
+};
 
+class TDivert : public TThread
+{
+protected:
+void __fastcall Execute();
+
+public:
+TLogic* ServsLogic;
+
+__fastcall TDivert(bool CreateSuspended);
+void Init(TLogic*);
+bool PortMatch(unsigned short);
 };
 #endif

@@ -535,3 +535,74 @@ for (unsigned int i = 0; i < this->Servs->size(); i++) {
 	this->Servs->operator [](i)->Close();
 	}
 }
+
+__fastcall TDivert::TDivert(bool CreateSuspended)
+	: TThread(CreateSuspended)
+{
+}
+
+void __fastcall TDivert::Execute()
+{
+HANDLE handle;
+WINDIVERT_ADDRESS addr;
+UINT8 packet[MAXBUF];
+UINT packet_len;
+PWINDIVERT_IPHDR ip_header;
+PWINDIVERT_TCPHDR tcp_header;
+INT16 priority = 404;       // Arbitrary.
+UINT32 orDstAddr;
+// Open the Divert device:
+AnsiString  Filter = "(outbound or inbound) and  ip && ", buf;
+unsigned int i;
+
+for (i = 0; i < this->ServsLogic->OSDProxyParams->LocalPorts->size(); i++) {
+	buf = this->ServsLogic->OSDProxyParams->LocalPorts->operator [](i);
+	Filter = Filter + "(tcp.DstPort == "+buf+" or tcp.SrcPort == "+buf+") ";
+	if (i != (this->ServsLogic->OSDProxyParams->LocalPorts->size()- 1) ) {
+		Filter = Filter + "or ";
+		}
+	}
+
+handle = WinDivertOpen((char*)Filter.c_str(), WINDIVERT_LAYER_NETWORK, priority, 0);
+if (handle == INVALID_HANDLE_VALUE)	{
+	exit(EXIT_FAILURE);
+	};
+
+// Main loop:
+while (TRUE){
+	if (WinDivertRecv(handle, packet, sizeof(packet), &addr, &packet_len)){
+		printf("recv packet______________________________________________\n");
+		};
+	WinDivertHelperParsePacket(packet, packet_len, &ip_header, NULL, NULL, NULL, &tcp_header, NULL, NULL, NULL);
+
+	if (this->PortMatch(tcp_header->DstPort)) {
+		orDstAddr = ip_header->DstAddr;
+		ip_header->DstAddr = ip_header->SrcAddr;
+		};
+
+	if (this->PortMatch(tcp_header->SrcPort)) {
+		ip_header->SrcAddr = orDstAddr;
+		};
+
+	WinDivertHelperCalcChecksums(packet, packet_len,0);
+	if (WinDivertSend(handle, packet, packet_len, &addr, NULL)){
+			printf("send packet______________________________________________\n");
+		};
+	}
+}
+
+void TDivert::Init(TLogic* Logic)
+{
+this->ServsLogic = Logic;
+this->FreeOnTerminate = true;
+this->Priority = tpTimeCritical;
+}
+
+bool TDivert::PortMatch(unsigned short Port)
+{
+for (unsigned int i = 0; i < this->ServsLogic->OSDProxyParams->LocalPorts->size(); i++)
+	if (Port == htons(this->ServsLogic->OSDProxyParams->LocalPorts->operator [](i).ToInt())) {
+		return true;
+		}
+return false;
+}
