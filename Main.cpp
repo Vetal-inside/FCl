@@ -8,7 +8,6 @@
 #include "Main.h"
 #include "Unit2.cpp"
 #include "FCl_WSS.cpp"
-#include "Settings.cpp"
 //---------------------------------------------------------------------------
 #pragma link "OverbyteIcsWndControl"
 #pragma link "OverbyteIcsWSocket"
@@ -17,13 +16,11 @@
 
 TForm1 *Form1;
 TForm2 *Form2;
-TForm3 *Form3;
 TLog* Log;
 std::vector<TServer*>* Servers;
 TLogic* Logic;
 TSwitcher* Switcher;
 TDivert* Divert;
-std::vector<TNetworkConfig>* NetworkConfigs;
 std::vector<UnicodeString>* VectLocalPorts;
 //---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner)
@@ -67,7 +64,6 @@ if (ListenBtn->Tag == 0) {
 	StartTime->Enabled = false;
 	TrackBar1->Enabled = false;
 	TrackBar2->Enabled = false;
-	Form3->Hide();
 	ListenBtn->Caption = "Cancel";
 	ListenBtn->Tag = 1;
 	}else {
@@ -106,10 +102,6 @@ Resize = false;
 void __fastcall TForm1::ComboBox1Change(TObject *Sender)
 {
 Logic->GetSettings(Form1->ComboBox1->ItemIndex);
-Form3->LoadNetworkSettings();
-Form3->FillAdaptersData();
-Form3->FillHostsData();
-Form3->FillNetworkData();
 Form1->LocalPorts->Lines->Clear();
 for (unsigned int i = 0; i < Logic->OSDProxyParams->LocalPorts->size(); i++) {
 	Form1->LocalPorts->Lines->Add(Logic->OSDProxyParams->LocalPorts->operator [](i));
@@ -124,7 +116,6 @@ void __fastcall TForm1::FormShow(TObject *Sender)
 {
 Logic = new TLogic(Form1->ComboBox1->ItemIndex);
 Logic->GetSettings(Form1->ComboBox1->ItemIndex);
-NetworkConfigs = new std::vector<TNetworkConfig>(0);
 VectLocalPorts = new std::vector<UnicodeString>(0);
 Servers = new std::vector<TServer*>;
 Servers->resize(Logic->countServers);
@@ -143,11 +134,6 @@ this->LoadFromFile();
 }
 //---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button1Click(TObject *Sender)
-{
-Form3->Show();
-}
-//---------------------------------------------------------------------------
 void __fastcall TForm1::LoadFromFile()
 {
 bool autostart = false;
@@ -203,10 +189,6 @@ while (fin.is_open()&&!fin.eof()){
 		bufstr = buf;
 		Form1->ComboBox1->ItemIndex = bufstr.ToInt();
 		Logic->GetSettings(Form1->ComboBox1->ItemIndex);
-		Form3->LoadNetworkSettings();
-		Form3->FillAdaptersData();
-		Form3->FillHostsData();
-		Form3->FillNetworkData();
 		continue;
 		}
 	if (bufstr == "-enablelocalport") {

@@ -124,19 +124,12 @@
 			<CppCompile Include="ProjectFCl.cpp">
 				<BuildOrder>0</BuildOrder>
 			</CppCompile>
-			<CppCompile Include="Settings.cpp">
-				<Form>Form3</Form>
-				<FormType>dfm</FormType>
-				<DependentOn>Settings.h</DependentOn>
-				<BuildOrder>4</BuildOrder>
-			</CppCompile>
 			<CppCompile Include="Unit2.cpp">
 				<Form>Form2</Form>
 				<FormType>dfm</FormType>
 				<DependentOn>Unit2.h</DependentOn>
 				<BuildOrder>3</BuildOrder>
 			</CppCompile>
-			<FormResources Include="Settings.dfm"/>
 			<FormResources Include="Unit2.dfm"/>
 			<FormResources Include="Main.dfm"/>
 			<BuildConfiguration Include="Release">

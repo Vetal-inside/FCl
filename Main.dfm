@@ -151,7 +151,6 @@ object Form1: TForm1
     Height = 21
     Caption = 'Settings'
     TabOrder = 7
-    OnClick = Button1Click
   end
   object ComboBox2: TComboBox
     Left = 447
