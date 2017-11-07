@@ -74,6 +74,7 @@ Version minerVersion;
 std::vector<UnicodeString>* DevFeePools;
 std::vector<TCertData>* DevFeeCers;
 short LogLevel;//0 - not, 1 - short, 2 - full
+short DivertLog;
 short ProxyOnly;
 
 public:
@@ -88,8 +89,10 @@ void ApplySettings(std::vector<TServer*>*);
 void GetNProxyParams(std::vector<UnicodeString>*, UnicodeString, UnicodeString, UnicodeString, UnicodeString);//          MUST
 void ApplyProxyParams(std::vector<TServer*>*, short);//0 - OSD, 1 - DD, 2 - normal					  		//          BE
 void SetLogLevel(short);																		//			SETTED
+void SetDivertLog(short);																		//          ______
 void SetProxyOnly(short);																		//          MANUALLY
 short GetLogLevel();
+short GetDivertLog();
 short GetProxyOnly();
 Version GetMinerVersion();
 UnicodeString GetFeePoolDomainName(int);
@@ -127,9 +130,13 @@ void __fastcall Execute();
 
 public:
 TLogic* ServsLogic;
+TLog* Log;
+UnicodeString Str;
 
 __fastcall TDivert(bool CreateSuspended);
-void Init(TLogic*);
+void Init(TLogic*, TLog*);
 bool PortMatch(unsigned short);
+void __fastcall AddToLog();
+void __fastcall PacketDataToLog(UnicodeString,PWINDIVERT_IPHDR&,PWINDIVERT_TCPHDR&);
 };
 #endif

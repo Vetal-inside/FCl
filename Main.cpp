@@ -33,6 +33,7 @@ void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 int i,j;
 if (ListenBtn->Tag == 0) {
+	Form2->Show();
 	for (int i = 0; i < Logic->countServers; i++) {
 		Servers->operator [](i)->Init();
 		Servers->operator [](i)->SetLogLevel(Form1->ComboBox2->ItemIndex);
@@ -48,7 +49,7 @@ if (ListenBtn->Tag == 0) {
 	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Servers,Logic,Form1->StartTime->Text);
 	Switcher->Start();
 	Divert = new TDivert(true);
-	Divert->Init(Logic);
+	Divert->Init(Logic, Log);
 	Divert->Start();
 	for (int i = 0; i < Logic->countServers; i++) {
 		Servers->operator [](i)->Listen();
@@ -182,6 +183,14 @@ while (fin.is_open()&&!fin.eof()){
 		fin >> (char*)buf;
 		bufstr = buf;
 		Form1->ComboBox2->ItemIndex = bufstr.ToInt();
+		continue;
+		}
+	if (bufstr == "-divertlog") {
+		fin >> (char*)buf;
+		bufstr = buf;
+		if (bufstr == "1") {
+			Logic->SetDivertLog(1);
+			}
 		continue;
 		}
 	if (bufstr == "-minerversion") {

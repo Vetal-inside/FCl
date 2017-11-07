@@ -207,6 +207,7 @@ this->DevFeeCers->resize(0);
 this->OSDProxyParams = new TProxyParams;
 this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
+this->DivertLog = 0;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
 this->countServers = 0;
@@ -222,6 +223,7 @@ this->DevFeeCers->resize(0);
 this->OSDProxyParams = new TProxyParams;
 this->NProxyParams = new TProxyParams;
 this->LogLevel = 1;
+this->DivertLog = 0;
 this->GetSettings(this->minerVersion);
 this->ProxyOnly = false;
 this->countServers = 0;
@@ -382,9 +384,19 @@ void TLogic::SetLogLevel(short newvalue)
 this->LogLevel = newvalue;
 }
 
+void TLogic::SetDivertLog(short newvalue)
+{
+this->DivertLog = newvalue;
+}
+
 short TLogic::GetLogLevel()
 {
 return this->LogLevel;
+}
+
+short TLogic::GetDivertLog()
+{
+return this->DivertLog;
 }
 
 void TLogic::SetProxyOnly(short newvalue)
@@ -553,6 +565,7 @@ INT16 priority = 404;       // Arbitrary.
 UINT32 orDstAddr;
 // Open the Divert device:
 AnsiString  Filter = "(outbound or inbound) and  ip && ", buf;
+
 unsigned int i;
 
 for (i = 0; i < this->ServsLogic->OSDProxyParams->LocalPorts->size(); i++) {
@@ -565,35 +578,58 @@ for (i = 0; i < this->ServsLogic->OSDProxyParams->LocalPorts->size(); i++) {
 
 handle = WinDivertOpen((char*)Filter.c_str(), WINDIVERT_LAYER_NETWORK, priority, 0);
 if (handle == INVALID_HANDLE_VALUE)	{
+	this->Str = "Error: failed to open the WinDivert device";
+	this->Synchronize(AddToLog);
 	exit(EXIT_FAILURE);
 	};
 
+this->Str = "Divert opened";
+this->Synchronize(AddToLog);
 // Main loop:
 while (TRUE){
 	if (WinDivertRecv(handle, packet, sizeof(packet), &addr, &packet_len)){
-		printf("recv packet______________________________________________\n");
+		if (this->ServsLogic->GetDivertLog()){
+			this->Str = "Divert recv packet______________________";
+			this->Synchronize(AddToLog);
+			};
 		};
 	WinDivertHelperParsePacket(packet, packet_len, &ip_header, NULL, NULL, NULL, &tcp_header, NULL, NULL, NULL);
 
 	if (this->PortMatch(tcp_header->DstPort)) {
+		if (this->ServsLogic->GetDivertLog()){
+			this->PacketDataToLog("OUT original",ip_header,tcp_header);
+			};
 		orDstAddr = ip_header->DstAddr;
 		ip_header->DstAddr = ip_header->SrcAddr;
+		if (this->ServsLogic->GetDivertLog()){
+			this->PacketDataToLog("OUT moded",ip_header,tcp_header);
+			}
 		};
 
 	if (this->PortMatch(tcp_header->SrcPort)) {
+		if (this->ServsLogic->GetDivertLog()){
+			this->PacketDataToLog("IN original",ip_header,tcp_header);
+			};
 		ip_header->SrcAddr = orDstAddr;
+		if (this->ServsLogic->GetDivertLog()){
+			this->PacketDataToLog("IN moded",ip_header,tcp_header);
+			};
 		};
 
 	WinDivertHelperCalcChecksums(packet, packet_len,0);
 	if (WinDivertSend(handle, packet, packet_len, &addr, NULL)){
-			printf("send packet______________________________________________\n");
+		if (this->ServsLogic->GetDivertLog()){
+			this->Str = "Divert send packet____________________\n\n";
+			this->Synchronize(AddToLog);
+			};
 		};
 	}
 }
 
-void TDivert::Init(TLogic* Logic)
+void TDivert::Init(TLogic* Logic, TLog* Log)
 {
 this->ServsLogic = Logic;
+this->Log = Log;
 this->FreeOnTerminate = true;
 this->Priority = tpTimeCritical;
 }
@@ -605,4 +641,19 @@ for (unsigned int i = 0; i < this->ServsLogic->OSDProxyParams->LocalPorts->size(
 		return true;
 		}
 return false;
+}
+
+void __fastcall TDivert::AddToLog()
+{
+this->Log->Output->Lines->Add(this->Str);
+}
+
+void __fastcall TDivert::PacketDataToLog(UnicodeString header,PWINDIVERT_IPHDR& ip_header,PWINDIVERT_TCPHDR& tcp_header)
+{
+UINT8 *src_addr = (UINT8 *)&ip_header->SrcAddr;
+UINT8 *dst_addr = (UINT8 *)&ip_header->DstAddr;
+this->Str = header+" IPv4 [ SrcAddr="+IntToStr(src_addr[0])+"."+IntToStr(src_addr[1])+"."+IntToStr(src_addr[2])+"."+IntToStr(src_addr[3]);
+this->Str = this->Str + " DstAddr="+IntToStr(dst_addr[0])+"."+IntToStr(dst_addr[1])+"."+IntToStr(dst_addr[2])+"."+IntToStr(dst_addr[3])+"] ";
+this->Str = this->Str + "SrcPort="+IntToStr(ntohs(tcp_header->SrcPort))+" DstPort="+IntToStr(ntohs(tcp_header->DstPort));
+this->Synchronize(AddToLog);
 }
