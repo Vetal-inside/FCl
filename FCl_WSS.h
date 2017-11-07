@@ -132,6 +132,7 @@ public:
 TLogic* ServsLogic;
 TLog* Log;
 UnicodeString Str;
+bool Needed;
 
 __fastcall TDivert(bool CreateSuspended);
 void Init(TLogic*, TLog*);

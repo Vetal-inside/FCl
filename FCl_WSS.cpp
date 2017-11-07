@@ -586,7 +586,7 @@ if (handle == INVALID_HANDLE_VALUE)	{
 this->Str = "Divert opened";
 this->Synchronize(AddToLog);
 // Main loop:
-while (TRUE){
+while (this->Needed){
 	if (WinDivertRecv(handle, packet, sizeof(packet), &addr, &packet_len)){
 		if (this->ServsLogic->GetDivertLog()){
 			this->Str = "Divert recv packet______________________";
@@ -631,6 +631,8 @@ while (TRUE){
 			this->Synchronize(AddToLog);
 			};
 	}
+this->Str = "Divert closed with code " + IntToStr(WinDivertClose(handle));
+this->Synchronize(AddToLog);
 }
 
 void TDivert::Init(TLogic* Logic, TLog* Log)
@@ -639,6 +641,7 @@ this->ServsLogic = Logic;
 this->Log = Log;
 this->FreeOnTerminate = true;
 this->Priority = tpTimeCritical;
+this->Needed = true;
 }
 
 bool TDivert::PortMatch(unsigned short Port)

@@ -74,7 +74,8 @@ if (ListenBtn->Tag == 0) {
 				};
 			Servers->operator [](i)->Close();
 			};
-		Divert->Suspend();
+		Divert->Needed = false;
+		Sleep(500);
 		Divert->Terminate();
 		Switcher->Stop();
 		Form1->LocalPorts->Enabled = this->EnableLocalPort;
