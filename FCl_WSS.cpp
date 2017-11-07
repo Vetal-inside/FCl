@@ -592,7 +592,11 @@ while (TRUE){
 			this->Str = "Divert recv packet______________________";
 			this->Synchronize(AddToLog);
 			};
-		};
+		} else {
+			this->Str = "WARNING, failed to recv packet!______________________";
+			this->Synchronize(AddToLog);
+			continue;
+			};
 	WinDivertHelperParsePacket(packet, packet_len, &ip_header, NULL, NULL, NULL, &tcp_header, NULL, NULL, NULL);
 
 	if (this->PortMatch(tcp_header->DstPort)) {
@@ -619,10 +623,13 @@ while (TRUE){
 	WinDivertHelperCalcChecksums(packet, packet_len,0);
 	if (WinDivertSend(handle, packet, packet_len, &addr, NULL)){
 		if (this->ServsLogic->GetDivertLog()){
-			this->Str = "Divert send packet____________________\n\n";
+			this->Str = "Divert reinject packet____________________\n\n";
 			this->Synchronize(AddToLog);
 			};
-		};
+		} else {
+			this->Str = "WARNING, failed to reinject packet!______________________";
+			this->Synchronize(AddToLog);
+			};
 	}
 }
 
