@@ -136,11 +136,10 @@ object Form1: TForm1
     Style = csDropDownList
     ItemIndex = 0
     TabOrder = 6
-    Text = 'Claymore'#39's ZCash miner v9.1'
+    Text = 'Claymore'#39's ZCash miner v14.4+'
     OnChange = ComboBox1Change
     Items.Strings = (
-      'Claymore'#39's ZCash miner v9.1'
-      'Claymore'#39's ZCash miner v9.3 and newer'
+      'Claymore'#39's ZCash miner v14.4+'
       'Claymore'#39's Ethereum miner v7.4'
       'Claymore'#39's CryptoNote Miner v9.7')
   end
@@ -204,9 +203,9 @@ object Form1: TForm1
     Height = 46
     Enabled = False
     Lines.Strings = (
-      '3333'
-      '6666'
-      '2142')
+      '3443'
+      '6633'
+      '2242')
     TabOrder = 2
   end
 end

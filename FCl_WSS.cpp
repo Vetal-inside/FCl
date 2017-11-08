@@ -109,8 +109,7 @@ __try {
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
 			switch (this->ServerLogic->GetMinerVersion()) {
-				case cm91z:
-				case cm93z_pl:
+				case cm144z_pl:
 					if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
@@ -199,7 +198,7 @@ this->ServerLog->LogLevel = level;
 
 TLogic::TLogic()
 {
-this->minerVersion = cm91z;
+this->minerVersion = cm144z_pl;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
 this->DevFeeCers = new std::vector<TCertData>;
@@ -233,40 +232,30 @@ void TLogic::GetSettings(int vers)
 {
 this->minerVersion = (Version)vers;
 switch (this->minerVersion) {
-	case cm91z:
-	case cm93z_pl:
+	case cm144z_pl:
 		this->DevFeePools->resize(4);
 		this->DevFeePools->operator [](0) = "us1-zcash.flypool.org";							//Normal 3333		SSL 3443
 		this->DevFeePools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
 		this->DevFeePools->operator [](2) = "zec-eu1.nanopool.org";							//Normal 6666		SSL 6633
 		this->DevFeePools->operator [](3) = "zec.suprnova.cc";								//Normal 2142		SSL 2242
 
-		if (this->minerVersion == cm91z) {
-			this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
-			this->OSDProxyParams->LocalPorts->resize(3);
-			this->OSDProxyParams->LocalPorts->operator [](0) = "3333";
-			this->OSDProxyParams->LocalPorts->operator [](1) = "6666";
-			this->OSDProxyParams->LocalPorts->operator [](2) = "2142";
+		this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
+		this->OSDProxyParams->LocalPorts->resize(3);
+		this->OSDProxyParams->LocalPorts->operator [](0) = "3443";
+		this->OSDProxyParams->LocalPorts->operator [](1) = "6633";
+		this->OSDProxyParams->LocalPorts->operator [](2) = "2242";
 
-			this->DevFeeCers->resize(0);
-			} else {
-				this->OSDProxyParams->LocalPorts = new std::vector<UnicodeString>;
-				this->OSDProxyParams->LocalPorts->resize(3);
-				this->OSDProxyParams->LocalPorts->operator [](0) = "3443";
-				this->OSDProxyParams->LocalPorts->operator [](1) = "6633";
-				this->OSDProxyParams->LocalPorts->operator [](2) = "2242";
+		this->DevFeeCers->resize(3);
+		this->DevFeeCers->operator [](0).CACert = "flypool/rootCA.crt";
+		this->DevFeeCers->operator [](0).Cert = "flypool/FCl.crt";
+		this->DevFeeCers->operator [](0).Key = "flypool/FCl.key";
+		this->DevFeeCers->operator [](1).CACert = "nanopool/rootCA.crt";
+		this->DevFeeCers->operator [](1).Cert = "nanopool/FCl.crt";
+		this->DevFeeCers->operator [](1).Key = "nanopool/FCl.key";
+		this->DevFeeCers->operator [](2).CACert = "suprnova/rootCA.crt";
+		this->DevFeeCers->operator [](2).Cert = "suprnova/FCl.crt";
+		this->DevFeeCers->operator [](2).Key = "suprnova/FCl.key";
 
-				this->DevFeeCers->resize(3);
-				this->DevFeeCers->operator [](0).CACert = "flypool/rootCA.crt";
-				this->DevFeeCers->operator [](0).Cert = "flypool/FCl.crt";
-				this->DevFeeCers->operator [](0).Key = "flypool/FCl.key";
-				this->DevFeeCers->operator [](1).CACert = "nanopool/rootCA.crt";
-				this->DevFeeCers->operator [](1).Cert = "nanopool/FCl.crt";
-				this->DevFeeCers->operator [](1).Key = "nanopool/FCl.key";
-				this->DevFeeCers->operator [](2).CACert = "suprnova/rootCA.crt";
-				this->DevFeeCers->operator [](2).Cert = "suprnova/FCl.crt";
-				this->DevFeeCers->operator [](2).Key = "suprnova/FCl.key";
-				};
 		this->OSDProxyParams->RemotePort = "3333";
 		this->OSDProxyParams->RemoteIP = "94.23.60.113";
 		this->OSDProxyParams->RemoteAddress = "eu1-zcash.flypool.org";
@@ -321,14 +310,13 @@ void TLogic::ApplySettings(std::vector<TServer*>* Servers)
 int i;
 Servers->operator [](0)->ServerLog->LogVersion = (short)Servers->operator [](0)->ServerLogic->minerVersion;
 switch (this->minerVersion) {
-	case cm91z:
 	case cm74et:
 	case cm97x:
 		for (i = 0; i < this->countServers; i++) {
 			Servers->operator [](i)->SslEnable = false;
 			};
 		break;
-	case cm93z_pl:
+	case cm144z_pl:
 		for (i = 0; i < this->countServers; i++) {
 			Servers->operator [](i)->SslContext->SslVersionMethod = sslBestVer_SERVER;
 			Servers->operator [](i)->SslContext->SslCAFile = this->DevFeeCers->operator [](i).CACert;
