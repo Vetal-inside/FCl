@@ -267,10 +267,10 @@ switch (this->minerVersion) {
 				this->DevFeeCers->operator [](2).Cert = "suprnova/FCl.crt";
 				this->DevFeeCers->operator [](2).Key = "suprnova/FCl.key";
 				};
-		this->OSDProxyParams->RemotePort = "3357";
-		this->OSDProxyParams->RemoteIP = "5.153.50.217";
-		this->OSDProxyParams->RemoteAddress = "equihash.eu.nicehash.com";
-		this->OSDProxyParams->Login = "12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA";
+		this->OSDProxyParams->RemotePort = "3333";
+		this->OSDProxyParams->RemoteIP = "94.23.60.113";
+		this->OSDProxyParams->RemoteAddress = "eu1-zcash.flypool.org";
+		this->OSDProxyParams->Login = "t1ZFCLi5vyXye2t6Xm68Kzukyi5kYo44JrB";
 		this->countServers = 3;
 		break;
 	case cm74et:

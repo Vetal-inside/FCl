@@ -78,7 +78,7 @@ object Form1: TForm1
     Top = 8
     Width = 129
     Height = 13
-    Caption = 'Donation - 1 hours per day'
+    Caption = 'Donation - 4 hours per day'
   end
   object Label10: TLabel
     Left = 536
@@ -93,7 +93,7 @@ object Form1: TForm1
     Width = 75
     Height = 21
     TabOrder = 0
-    Text = '3357'
+    Text = '3333'
   end
   object ListenBtn: TButton
     Left = 16
@@ -110,7 +110,7 @@ object Form1: TForm1
     Width = 313
     Height = 21
     TabOrder = 3
-    Text = '12enkHEmDsF1e7jwyXZY2DdqdJNNEnRpvA'
+    Text = 't1ZFCLi5vyXye2t6Xm68Kzukyi5kYo44JrB'
   end
   object RemoteAddr: TEdit
     Left = 120
@@ -118,7 +118,7 @@ object Form1: TForm1
     Width = 217
     Height = 21
     TabOrder = 4
-    Text = 'equihash.eu.nicehash.com'
+    Text = 'eu1-zcash.flypool.org'
   end
   object RealIP: TEdit
     Left = 352
@@ -126,7 +126,7 @@ object Form1: TForm1
     Width = 81
     Height = 21
     TabOrder = 5
-    Text = '5.153.50.217'
+    Text = '94.23.60.113'
   end
   object ComboBox1: TComboBox
     Left = 536
@@ -149,8 +149,9 @@ object Form1: TForm1
     Top = 76
     Width = 75
     Height = 21
-    Caption = 'Settings'
+    Caption = 'Log'
     TabOrder = 7
+    OnClick = Button1Click
   end
   object ComboBox2: TComboBox
     Left = 447
@@ -172,7 +173,8 @@ object Form1: TForm1
     Top = 24
     Width = 161
     Height = 21
-    Max = 23
+    Max = 24
+    Position = 2
     TabOrder = 9
     ThumbLength = 15
     OnChange = TrackBar1Change
@@ -200,6 +202,7 @@ object Form1: TForm1
     Top = 24
     Width = 75
     Height = 46
+    Enabled = False
     Lines.Strings = (
       '3333'
       '6666'

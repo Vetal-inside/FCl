@@ -27,13 +27,14 @@ __fastcall TForm1::TForm1(TComponent* Owner)
 	: TForm(Owner)
 {
 this->EnableLocalPort = false;
+this->minOSDDonation = 2;
+this->TrackBar1->Max = 24 - this->minOSDDonation;
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::ListenBtnClick(TObject *Sender)
 {
 int i,j;
 if (ListenBtn->Tag == 0) {
-	Form2->Show();
 	for (int i = 0; i < Logic->countServers; i++) {
 		Servers->operator [](i)->Init();
 		Servers->operator [](i)->SetLogLevel(Form1->ComboBox2->ItemIndex);
@@ -46,7 +47,7 @@ if (ListenBtn->Tag == 0) {
 		}
 	Logic->GetNProxyParams(VectLocalPorts,this->RemotePort->Text,this->RealIP->Text,this->RemoteAddr->Text,this->edWorker->Text);
 	Logic->ApplyProxyParams(Servers,2);
-	Switcher->Init(Form1->TrackBar1->Position + 1,Form1->TrackBar2->Position,Servers,Logic,Form1->StartTime->Text);
+	Switcher->Init(Form1->TrackBar1->Position + Form1->minOSDDonation,Form1->TrackBar2->Position,Servers,Logic,Form1->StartTime->Text);
 	Switcher->Start();
 	Divert = new TDivert(true);
 	Divert->Init(Logic, Log);
@@ -235,8 +236,8 @@ while (fin.is_open()&&!fin.eof()){
 	if (bufstr == "-donationosd") {
 		fin >> (char*)buf;
 		bufstr = buf;
-		if ((bufstr.ToInt() > 0)&&(bufstr.ToInt() < 25)) {
-			Form1->TrackBar1->Position = bufstr.ToInt() -1;
+		if ((bufstr.ToInt() >= this->minOSDDonation)&&(bufstr.ToInt() < 25)) {
+			Form1->TrackBar1->Position = bufstr.ToInt() - this->minOSDDonation;
 			}
 		continue;
 		}
@@ -257,14 +258,20 @@ if (autostart) {
 //---------------------------------------------------------------------------
 void __fastcall TForm1::TrackBar1Change(TObject *Sender)
 {
-Form1->Label8->Caption = "Donation - "+IntToStr(Form1->TrackBar1->Position + 1)+" hours per day";
-Form1->TrackBar2->Max = 24 - Form1->TrackBar1->Position - 1;
+Form1->Label8->Caption = "Donation - "+IntToStr(Form1->TrackBar1->Position + Form1->minOSDDonation)+" hours per day";
+Form1->TrackBar2->Max = 24 - Form1->TrackBar1->Position - Form1->minOSDDonation;
 }
 //---------------------------------------------------------------------------
 
 void __fastcall TForm1::TrackBar2Change(TObject *Sender)
 {
 Form1->Label9->Caption = "Donation to miner dev - "+IntToStr(Form1->TrackBar2->Position)+" hours";
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button1Click(TObject *Sender)
+{
+Form2->Show();
 }
 //---------------------------------------------------------------------------
 

@@ -43,11 +43,13 @@ __published:	// IDE-managed Components
 	void __fastcall LoadFromFile();
 	void __fastcall TrackBar1Change(TObject *Sender);
 	void __fastcall TrackBar2Change(TObject *Sender);
+	void __fastcall Button1Click(TObject *Sender);
 
 private:
 public:		// User declarations
 	__fastcall TForm1(TComponent* Owner);
 	bool EnableLocalPort;
+	short minOSDDonation;
 };
 //---------------------------------------------------------------------------
 extern PACKAGE TForm1 *Form1;
