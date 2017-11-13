@@ -1,6 +1,6 @@
 # FCl and related scripts license agreement
 
-Copyright (C) 2016 by Vetal-inside
+Copyright (C) 2017 by Vetal-inside
 
 SSL implementation includes code written by Arno Garrels,
 Berlin, Germany, contact: <arno.garrels@gmx.de>
