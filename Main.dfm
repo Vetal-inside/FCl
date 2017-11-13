@@ -136,10 +136,10 @@ object Form1: TForm1
     Style = csDropDownList
     ItemIndex = 0
     TabOrder = 6
-    Text = 'Claymore'#39's ZCash miner v14.4+'
+    Text = 'Claymore'#39's ZCash miner v12.4+'
     OnChange = ComboBox1Change
     Items.Strings = (
-      'Claymore'#39's ZCash miner v14.4+'
+      'Claymore'#39's ZCash miner v12.4+'
       'Claymore'#39's Ethereum miner v7.4'
       'Claymore'#39's CryptoNote Miner v9.7')
   end

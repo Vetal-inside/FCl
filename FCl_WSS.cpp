@@ -109,7 +109,7 @@ __try {
 		json_root = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(InArr.operator [](i)),0);
 		if ((json_root)&&(json_root->Get("id"))) {
 			switch (this->ServerLogic->GetMinerVersion()) {
-				case cm144z_pl:
+				case cm124z_pl:
 					if (json_root->Get("id")->JsonValue->ToString() == "1") {//mining.subscribe BEGIN
 						if (json_root->Get("method")&&(json_root->Get("method")->JsonValue->ToString() == "\"mining.subscribe\"")){
 							json_array = (TJSONArray*) json_root->Get("params")->JsonValue;
@@ -198,7 +198,7 @@ this->ServerLog->LogLevel = level;
 
 TLogic::TLogic()
 {
-this->minerVersion = cm144z_pl;
+this->minerVersion = cm124z_pl;
 this->DevFeePools = new std::vector<UnicodeString>;
 this->DevFeePools->resize(0);
 this->DevFeeCers = new std::vector<TCertData>;
@@ -232,7 +232,7 @@ void TLogic::GetSettings(int vers)
 {
 this->minerVersion = (Version)vers;
 switch (this->minerVersion) {
-	case cm144z_pl:
+	case cm124z_pl:
 		this->DevFeePools->resize(4);
 		this->DevFeePools->operator [](0) = "us1-zcash.flypool.org";							//Normal 3333		SSL 3443
 		this->DevFeePools->operator [](1) = "eu1-zcash.flypool.org";							//Normal 3333		SSL 3443
@@ -316,7 +316,7 @@ switch (this->minerVersion) {
 			Servers->operator [](i)->SslEnable = false;
 			};
 		break;
-	case cm144z_pl:
+	case cm124z_pl:
 		for (i = 0; i < this->countServers; i++) {
 			Servers->operator [](i)->SslContext->SslVersionMethod = sslBestVer_SERVER;
 			Servers->operator [](i)->SslContext->SslCAFile = this->DevFeeCers->operator [](i).CACert;
